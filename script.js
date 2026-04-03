@@ -26,6 +26,13 @@ const videoItems = [
   },
 ];
 
+const SUPABASE_URL = "https://fsxzmnulugyteljsqmqc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzeHptbnVsdWd5dGVsanNxbXFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzUyMDMsImV4cCI6MjA5MDgxMTIwM30.SU719V9-_MKugPC6E2b0E7w1oAI55CgOrZWuNdum0_g";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const browserIdKey = "fobi-browser-id";
+const browserId = getOrCreateBrowserId();
+const cardRefreshers = new Map();
+
 if (window.location.hash) {
   history.replaceState(null, "", window.location.pathname + window.location.search);
 }
@@ -41,42 +48,64 @@ function createEmptyState(message) {
   return item;
 }
 
-const storagePrefix = "fobi-gallery";
-
-function getLikeCount(itemId) {
-  return Number(localStorage.getItem(`${storagePrefix}-likes-${itemId}`) || "0");
-}
-
-function setLikeCount(itemId, count) {
-  localStorage.setItem(`${storagePrefix}-likes-${itemId}`, String(count));
-}
-
-function hasLiked(itemId) {
-  return localStorage.getItem(`${storagePrefix}-liked-${itemId}`) === "true";
-}
-
-function setLiked(itemId, liked) {
-  localStorage.setItem(`${storagePrefix}-liked-${itemId}`, String(liked));
-}
-
-function getStoredComments(itemId) {
-  try {
-    return JSON.parse(localStorage.getItem(`${storagePrefix}-comments-${itemId}`)) || [];
-  } catch (error) {
-    return [];
-  }
-}
-
-function saveComments(itemId, comments) {
-  localStorage.setItem(`${storagePrefix}-comments-${itemId}`, JSON.stringify(comments));
-}
-
 function formatDate(timestamp) {
   return new Date(timestamp).toLocaleString();
 }
 
-function renderCommentList(container, itemId) {
-  const comments = getStoredComments(itemId);
+function getOrCreateBrowserId() {
+  const existing = localStorage.getItem(browserIdKey);
+  if (existing) {
+    return existing;
+  }
+
+  const created = `browser-${crypto.randomUUID()}`;
+  localStorage.setItem(browserIdKey, created);
+  return created;
+}
+
+async function fetchLikeCount(itemId) {
+  const { count, error } = await supabaseClient
+    .from("gallery_likes")
+    .select("*", { count: "exact", head: true })
+    .eq("item_id", itemId);
+
+  if (error) {
+    return 0;
+  }
+
+  return count || 0;
+}
+
+async function fetchHasLiked(itemId) {
+  const { data, error } = await supabaseClient
+    .from("gallery_likes")
+    .select("item_id")
+    .eq("item_id", itemId)
+    .eq("browser_id", browserId)
+    .maybeSingle();
+
+  if (error) {
+    return false;
+  }
+
+  return Boolean(data);
+}
+
+async function fetchComments(itemId) {
+  const { data, error } = await supabaseClient
+    .from("gallery_comments")
+    .select("id, comment_text, created_at, browser_id")
+    .eq("item_id", itemId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return [];
+  }
+
+  return data || [];
+}
+
+function renderCommentList(container, comments) {
   container.innerHTML = "";
 
   if (!comments.length) {
@@ -87,11 +116,32 @@ function renderCommentList(container, itemId) {
   comments.forEach((comment) => {
     const commentEl = document.createElement("article");
     commentEl.className = "comment-item";
+    const canDelete = comment.browser_id === browserId;
     commentEl.innerHTML = `
-      <p>${comment.text}</p>
-      <span class="comment-time">${formatDate(comment.createdAt)}</span>
+      <div class="comment-item-top">
+        <p>${comment.comment_text}</p>
+        ${canDelete ? `<button class="comment-delete" type="button" data-comment-id="${comment.id}" aria-label="Delete comment">Delete</button>` : ""}
+      </div>
+      <span class="comment-time">${formatDate(comment.created_at)}</span>
     `;
     container.appendChild(commentEl);
+  });
+
+  container.querySelectorAll(".comment-delete").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const commentId = Number(button.dataset.commentId);
+      button.disabled = true;
+      await supabaseClient
+        .from("gallery_comments")
+        .delete()
+        .eq("id", commentId)
+        .eq("browser_id", browserId);
+
+      const itemId = comments.find((comment) => comment.id === commentId)?.item_id;
+      if (itemId) {
+        cardRefreshers.get(itemId)?.();
+      }
+    });
   });
 }
 
@@ -129,23 +179,41 @@ function buildPhotoCard(item) {
   const commentInput = article.querySelector("textarea");
   const commentList = article.querySelector(".comment-list");
 
-  function updateLikeButton() {
-    const likes = getLikeCount(item.id);
-    const liked = hasLiked(item.id);
+  async function refreshCardState() {
+    const [likes, liked, comments] = await Promise.all([
+      fetchLikeCount(item.id),
+      fetchHasLiked(item.id),
+      fetchComments(item.id),
+    ]);
+
     likeButton.classList.toggle("active", liked);
     likeButton.textContent = liked ? `Liked (${likes})` : `Like (${likes})`;
+    const commentsWithItem = comments.map((comment) => ({ ...comment, item_id: item.id }));
+    renderCommentList(commentList, commentsWithItem);
   }
 
-  updateLikeButton();
-  renderCommentList(commentList, item.id);
+  cardRefreshers.set(item.id, refreshCardState);
+  refreshCardState();
 
-  likeButton.addEventListener("click", () => {
-    const liked = hasLiked(item.id);
-    const likes = getLikeCount(item.id);
-    const nextLikes = liked ? Math.max(0, likes - 1) : likes + 1;
-    setLikeCount(item.id, nextLikes);
-    setLiked(item.id, !liked);
-    updateLikeButton();
+  likeButton.addEventListener("click", async () => {
+    likeButton.disabled = true;
+
+    const liked = await fetchHasLiked(item.id);
+
+    if (liked) {
+      await supabaseClient
+        .from("gallery_likes")
+        .delete()
+        .eq("item_id", item.id)
+        .eq("browser_id", browserId);
+    } else {
+      await supabaseClient
+        .from("gallery_likes")
+        .insert({ item_id: item.id, browser_id: browserId });
+    }
+
+    await refreshCardState();
+    likeButton.disabled = false;
   });
 
   commentToggle.addEventListener("click", () => {
@@ -163,14 +231,45 @@ function buildPhotoCard(item) {
       return;
     }
 
-    const comments = getStoredComments(item.id);
-    comments.unshift({ text, createdAt: Date.now() });
-    saveComments(item.id, comments);
-    commentInput.value = "";
-    renderCommentList(commentList, item.id);
+    commentForm.querySelector("button").disabled = true;
+
+    supabaseClient
+      .from("gallery_comments")
+      .insert({
+        item_id: item.id,
+        browser_id: browserId,
+        comment_text: text,
+      })
+      .then(async () => {
+        commentInput.value = "";
+        await refreshCardState();
+        commentForm.querySelector("button").disabled = false;
+      });
   });
 
   return article;
+}
+
+function setupRealtime() {
+  supabaseClient
+    .channel("gallery-live-updates")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "gallery_likes" },
+      (payload) => {
+        const itemId = payload.new?.item_id || payload.old?.item_id;
+        cardRefreshers.get(itemId)?.();
+      }
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "gallery_comments" },
+      (payload) => {
+        const itemId = payload.new?.item_id || payload.old?.item_id;
+        cardRefreshers.get(itemId)?.();
+      }
+    )
+    .subscribe();
 }
 
 function renderPhotos() {
@@ -236,3 +335,4 @@ function setupTabs() {
 renderPhotos();
 renderVideos();
 setupTabs();
+setupRealtime();
