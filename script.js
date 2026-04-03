@@ -191,16 +191,6 @@ async function fetchHasLiked(itemId) {
   return Boolean(data);
 }
 
-async function addLikeOnce(itemId) {
-  const { error } = await supabaseClient
-    .from("gallery_likes")
-    .insert({ item_id: itemId, browser_id: browserId });
-
-  if (error && error.code !== "23505") {
-    throw error;
-  }
-}
-
 async function fetchComments(itemId) {
   const { data, error } = await supabaseClient
     .from("gallery_comments")
@@ -298,9 +288,9 @@ function buildPhotoCard(item) {
 
     likeButton.classList.toggle("active", liked);
     likeButton.textContent = liked ? `Liked (${likes})` : `Like (${likes})`;
-    likeButton.disabled = liked;
-    likeButton.setAttribute("aria-disabled", String(liked));
-    likeButton.title = liked ? "You have already liked this photo from this device." : "Like this photo";
+    likeButton.disabled = false;
+    likeButton.removeAttribute("aria-disabled");
+    likeButton.title = liked ? "Unlike this photo" : "Like this photo";
     const commentsWithItem = comments.map((comment) => ({ ...comment, item_id: item.id }));
     renderCommentList(commentList, commentsWithItem);
   }
@@ -309,16 +299,24 @@ function buildPhotoCard(item) {
   refreshCardState();
 
   likeButton.addEventListener("click", async () => {
-    if (likeButton.disabled) {
-      return;
-    }
-
     likeButton.disabled = true;
 
     const liked = await fetchHasLiked(item.id);
 
-    if (!liked) {
-      await addLikeOnce(item.id);
+    if (liked) {
+      await supabaseClient
+        .from("gallery_likes")
+        .delete()
+        .eq("item_id", item.id)
+        .eq("browser_id", browserId);
+    } else {
+      const { error } = await supabaseClient
+        .from("gallery_likes")
+        .insert({ item_id: item.id, browser_id: browserId });
+
+      if (error && error.code !== "23505") {
+        throw error;
+      }
     }
 
     await refreshCardState();
