@@ -243,6 +243,12 @@
   <footer class="site-footer">
     <p>FOBI building a better tomorrow through care, support, and awareness – join us in making a difference!</p>
   </footer>
+  <footer>
+  <p>© <span id="year"></span> FOBI 2026. All rights reserved.</p>
+</footer>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
