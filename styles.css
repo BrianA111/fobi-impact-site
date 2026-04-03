@@ -558,6 +558,13 @@ blockquote {
   transform: translateY(-2px);
 }
 
+.gallery-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.88;
+  transform: none;
+  box-shadow: none;
+}
+
 .gallery-action.active {
   background: linear-gradient(135deg, #ff6b2c, #ff2d55);
   color: #fff;
