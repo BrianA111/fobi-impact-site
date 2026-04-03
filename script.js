@@ -32,6 +32,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 const browserIdKey = "fobi-browser-id";
 const browserId = getOrCreateBrowserId();
 const cardRefreshers = new Map();
+const visitSessionKey = `fobi-visit-recorded:${window.location.pathname}`;
 
 if (window.location.hash) {
   history.replaceState(null, "", window.location.pathname + window.location.search);
@@ -52,6 +53,11 @@ function formatDate(timestamp) {
   return new Date(timestamp).toLocaleString();
 }
 
+function formatLocation(geo) {
+  const parts = [geo.city, geo.region, geo.country].filter(Boolean);
+  return parts.length ? parts.join(", ") : "Unavailable";
+}
+
 function getOrCreateBrowserId() {
   const existing = localStorage.getItem(browserIdKey);
   if (existing) {
@@ -61,6 +67,85 @@ function getOrCreateBrowserId() {
   const created = `browser-${crypto.randomUUID()}`;
   localStorage.setItem(browserIdKey, created);
   return created;
+}
+
+async function fetchVisitorGeo() {
+  try {
+    const response = await fetch("https://ipwho.is/");
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error("Geo lookup failed");
+    }
+
+    return {
+      country: data.country || "",
+      region: data.region || "",
+      city: data.city || "",
+    };
+  } catch (error) {
+    return {
+      country: "",
+      region: "",
+      city: "",
+    };
+  }
+}
+
+async function recordVisit() {
+  const geo = await fetchVisitorGeo();
+  const visitorRegion = document.getElementById("visitor-region");
+
+  if (visitorRegion) {
+    visitorRegion.textContent = formatLocation(geo);
+  }
+
+  if (sessionStorage.getItem(visitSessionKey)) {
+    return geo;
+  }
+
+  await supabaseClient.from("site_visits").insert({
+    browser_id: browserId,
+    page_path: window.location.pathname,
+    country: geo.country || null,
+    region: geo.region || null,
+    city: geo.city || null,
+  });
+
+  sessionStorage.setItem(visitSessionKey, "true");
+  return geo;
+}
+
+function summarizeTopLocations(rows) {
+  const counts = rows.reduce((acc, row) => {
+    const country = row.country || "Unknown";
+    acc[country] = (acc[country] || 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([country, count]) => `${country} (${count})`)
+    .join(", ");
+}
+
+async function loadVisitorStats() {
+  const visitCountEl = document.getElementById("visit-count");
+  const topLocationsEl = document.getElementById("top-locations");
+
+  const [{ count }, { data }] = await Promise.all([
+    supabaseClient.from("site_visits").select("*", { count: "exact", head: true }),
+    supabaseClient.from("site_visits").select("country"),
+  ]);
+
+  if (visitCountEl) {
+    visitCountEl.textContent = String(count || 0);
+  }
+
+  if (topLocationsEl) {
+    topLocationsEl.textContent = data?.length ? summarizeTopLocations(data) : "No data yet";
+  }
 }
 
 async function fetchLikeCount(itemId) {
@@ -336,3 +421,4 @@ renderPhotos();
 renderVideos();
 setupTabs();
 setupRealtime();
+recordVisit().then(() => loadVisitorStats());
