@@ -725,11 +725,10 @@ blockquote {
 }
 
 .contact-card {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(220px, 320px) minmax(240px, 0.85fr);
   gap: 1.5rem;
-  align-items: start;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
 .contact-meta {
@@ -737,9 +736,9 @@ blockquote {
 }
 
 .identity-photo {
-  width: min(100%, 520px);
-  flex: 1 1 420px;
-  min-width: 280px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 20px;
