@@ -325,6 +325,7 @@ h3 {
 .two-column,
 .impact-grid,
 .feature-list,
+.visitor-grid,
 .media-grid {
   display: grid;
   gap: 1.25rem;
@@ -394,6 +395,36 @@ h3 {
 
 .impact-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.visitor-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.visitor-card {
+  min-height: 100%;
+}
+
+.visitor-label {
+  margin: 0 0 0.45rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.visitor-value {
+  margin: 0;
+  font-family: "Newsreader", serif;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.visitor-value-small {
+  font-size: 1.05rem;
+  line-height: 1.45;
 }
 
 .impact-card {
@@ -792,6 +823,7 @@ blockquote {
   .two-column,
   .impact-grid,
   .feature-list,
+  .visitor-grid,
   .statement-layout,
   .media-grid,
   .contact-card {
