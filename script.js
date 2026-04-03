@@ -54,8 +54,23 @@ function formatDate(timestamp) {
 }
 
 function formatLocation(geo) {
-  const parts = [geo.city, geo.region, geo.country].filter(Boolean);
-  return parts.length ? parts.join(", ") : "Unavailable";
+  const city = geo.city?.trim();
+  const region = geo.region?.trim();
+  const country = geo.country?.trim();
+
+  if (city && region && country) {
+    return `${city}, ${region}, ${country}`;
+  }
+
+  if (region && country) {
+    return `${region}, ${country}`;
+  }
+
+  if (country) {
+    return country;
+  }
+
+  return "Unavailable";
 }
 
 function getOrCreateBrowserId() {
@@ -176,6 +191,16 @@ async function fetchHasLiked(itemId) {
   return Boolean(data);
 }
 
+async function addLikeOnce(itemId) {
+  const { error } = await supabaseClient
+    .from("gallery_likes")
+    .insert({ item_id: itemId, browser_id: browserId });
+
+  if (error && error.code !== "23505") {
+    throw error;
+  }
+}
+
 async function fetchComments(itemId) {
   const { data, error } = await supabaseClient
     .from("gallery_comments")
@@ -273,6 +298,9 @@ function buildPhotoCard(item) {
 
     likeButton.classList.toggle("active", liked);
     likeButton.textContent = liked ? `Liked (${likes})` : `Like (${likes})`;
+    likeButton.disabled = liked;
+    likeButton.setAttribute("aria-disabled", String(liked));
+    likeButton.title = liked ? "You have already liked this photo from this device." : "Like this photo";
     const commentsWithItem = comments.map((comment) => ({ ...comment, item_id: item.id }));
     renderCommentList(commentList, commentsWithItem);
   }
@@ -281,24 +309,19 @@ function buildPhotoCard(item) {
   refreshCardState();
 
   likeButton.addEventListener("click", async () => {
+    if (likeButton.disabled) {
+      return;
+    }
+
     likeButton.disabled = true;
 
     const liked = await fetchHasLiked(item.id);
 
-    if (liked) {
-      await supabaseClient
-        .from("gallery_likes")
-        .delete()
-        .eq("item_id", item.id)
-        .eq("browser_id", browserId);
-    } else {
-      await supabaseClient
-        .from("gallery_likes")
-        .insert({ item_id: item.id, browser_id: browserId });
+    if (!liked) {
+      await addLikeOnce(item.id);
     }
 
     await refreshCardState();
-    likeButton.disabled = false;
   });
 
   commentToggle.addEventListener("click", () => {
