@@ -272,7 +272,7 @@ h3 {
   padding: 0.95rem 1.4rem;
   border-radius: 999px;
   font-weight: 700;
-  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  transition: transform 180ms ease, background 220ms ease, color 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   box-shadow: 0 12px 30px rgba(17, 17, 17, 0.14);
@@ -286,12 +286,12 @@ h3 {
 }
 
 .button-primary {
-  background: #111111;
+  background: linear-gradient(135deg, #ff6b2c, #ff2d55);
   color: #fff;
 }
 
 .button-secondary {
-  background: #111111;
+  background: linear-gradient(135deg, #111111, #303030);
   border: 1px solid #111111;
   color: #ffffff;
 }
@@ -466,12 +466,13 @@ blockquote {
   border-radius: 999px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  transition: transform 180ms ease, background 240ms ease, color 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
 }
 
 .tab-button.active {
-  background: #111111;
+  background: linear-gradient(135deg, #ff6b2c, #ff2d55);
   color: #fff;
+  box-shadow: 0 10px 24px rgba(255, 45, 85, 0.24);
 }
 
 .media-grid {
@@ -518,7 +519,7 @@ blockquote {
   padding: 0.55rem 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  transition: transform 180ms ease, background 240ms ease, color 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
 }
 
 .gallery-action:hover,
@@ -527,8 +528,9 @@ blockquote {
 }
 
 .gallery-action.active {
-  background: #111111;
+  background: linear-gradient(135deg, #ff6b2c, #ff2d55);
   color: #fff;
+  box-shadow: 0 10px 24px rgba(255, 45, 85, 0.24);
 }
 
 .comment-toggle {
@@ -572,11 +574,12 @@ blockquote {
   width: fit-content;
   border: 0;
   border-radius: 999px;
-  background: #111111;
+  background: linear-gradient(135deg, #ff6b2c, #ff2d55);
   color: #fff;
   padding: 0.65rem 1rem;
   font-weight: 700;
   cursor: pointer;
+  transition: transform 180ms ease, background 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
 }
 
 .comment-list {
@@ -593,6 +596,30 @@ blockquote {
 .comment-item p,
 .comment-empty {
   margin: 0;
+}
+
+.comment-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.comment-delete {
+  border: 0;
+  background: transparent;
+  color: #c63d12;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0;
+  flex-shrink: 0;
+  transition: opacity 180ms ease, color 180ms ease;
+}
+
+.comment-delete:hover,
+.comment-delete:focus-visible {
+  color: #8f2508;
+  opacity: 0.82;
 }
 
 .comment-time {
@@ -702,9 +729,9 @@ blockquote {
 .media-section .tab-button,
 .media-section .gallery-action,
 .media-section .comment-form button {
-  background: #111111;
+  background: linear-gradient(135deg, #ff6b2c, #ff2d55);
   color: #ffffff;
-  border-color: #111111;
+  border-color: transparent;
 }
 
 .media-section .media-item::before,
