@@ -736,11 +736,11 @@ blockquote {
 }
 
 .identity-photo {
-  width: min(100%, 320px);
+  width: min(100%, 420px);
   min-width: 0;
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 20px;
 }
 
 .identity-heading {
@@ -859,6 +859,12 @@ blockquote {
   padding-top: 0.5rem;
   padding-bottom: 2.5rem;
   text-align: center;
+}
+
+.copyright-notice {
+  margin-top: 0.45rem;
+  font-size: 0.92rem;
+  opacity: 0.9;
 }
 
 @media (max-width: 980px) {
