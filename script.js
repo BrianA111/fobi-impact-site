@@ -1,5 +1,11 @@
 const photoItems = [
   {
+    id: "outreach-2b",
+    src: "IMG_20260325_120315_492.jpg",
+    alt: "FOBI outreach photo five",
+    caption: "Another moment captured during the FOBI outreach visit.",
+  },
+  {
     id: "outreach-1",
     src: "IMG_20260325_101536_320.jpg",
     alt: "FOBI outreach photo one",
@@ -10,12 +16,6 @@ const photoItems = [
     src: "IMG_20260325_104646_893.jpg",
     alt: "FOBI outreach photo two",
     caption: "Support, care, and presence during the outreach project.",
-  },
-  {
-    id: "outreach-2b",
-    src: "IMG_20260325_120315_492.jpg",
-    alt: "FOBI outreach photo five",
-    caption: "Another moment captured during the FOBI outreach visit.",
   },
 ];
 
@@ -47,6 +47,14 @@ function createEmptyState(message) {
   item.className = "empty-state";
   item.innerHTML = `<p>${message}</p>`;
   return item;
+}
+
+function preventEasyImageSaving() {
+  document.querySelectorAll("img").forEach((img) => {
+    img.setAttribute("draggable", "false");
+    img.addEventListener("dragstart", (event) => event.preventDefault());
+    img.addEventListener("contextmenu", (event) => event.preventDefault());
+  });
 }
 
 function formatDate(timestamp) {
@@ -250,7 +258,7 @@ function buildPhotoCard(item) {
   article.className = "media-item";
   article.innerHTML = `
     <figure>
-      <img src="${item.src}" alt="${item.alt}">
+      <img src="${item.src}" alt="${item.alt}" draggable="false">
       <figcaption class="media-caption">
         <p>${item.caption}</p>
         <div class="gallery-actions">
@@ -296,30 +304,38 @@ function buildPhotoCard(item) {
   }
 
   cardRefreshers.set(item.id, refreshCardState);
-  refreshCardState();
+  refreshCardState().catch(() => {
+    likeButton.textContent = "Like";
+    renderCommentList(commentList, []);
+  });
 
   likeButton.addEventListener("click", async () => {
-    likeButton.disabled = true;
+    try {
+      likeButton.disabled = true;
 
-    const liked = await fetchHasLiked(item.id);
+      const liked = await fetchHasLiked(item.id);
 
-    if (liked) {
-      await supabaseClient
-        .from("gallery_likes")
-        .delete()
-        .eq("item_id", item.id)
-        .eq("browser_id", browserId);
-    } else {
-      const { error } = await supabaseClient
-        .from("gallery_likes")
-        .insert({ item_id: item.id, browser_id: browserId });
+      if (liked) {
+        await supabaseClient
+          .from("gallery_likes")
+          .delete()
+          .eq("item_id", item.id)
+          .eq("browser_id", browserId);
+      } else {
+        const { error } = await supabaseClient
+          .from("gallery_likes")
+          .insert({ item_id: item.id, browser_id: browserId });
 
-      if (error && error.code !== "23505") {
-        throw error;
+        if (error && error.code !== "23505") {
+          throw error;
+        }
       }
-    }
 
-    await refreshCardState();
+      await refreshCardState();
+    } catch (error) {
+      console.error("Like toggle failed", error);
+      likeButton.disabled = false;
+    }
   });
 
   commentToggle.addEventListener("click", () => {
@@ -349,6 +365,10 @@ function buildPhotoCard(item) {
       .then(async () => {
         commentInput.value = "";
         await refreshCardState();
+        commentForm.querySelector("button").disabled = false;
+      })
+      .catch((error) => {
+        console.error("Comment post failed", error);
         commentForm.querySelector("button").disabled = false;
       });
   });
@@ -397,7 +417,7 @@ function renderVideos() {
   const validVideos = videoItems.filter((item) => item.src.trim() !== "");
 
   if (!validVideos.length) {
-    panel.appendChild(createEmptyState("No videos added yet. Update the videoItems list in script.js."));
+    panel.appendChild(createEmptyState("No video yet coming soon!!"));
     return;
   }
 
@@ -438,8 +458,33 @@ function setupTabs() {
   });
 }
 
+function setupMobileNav() {
+  const toggle = document.querySelector(".nav-toggle");
+  const nav = document.querySelector(".nav-links");
+
+  if (!toggle || !nav) {
+    return;
+  }
+
+  toggle.addEventListener("click", () => {
+    const open = nav.classList.toggle("nav-links-open");
+    toggle.classList.toggle("nav-toggle-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+
+  nav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      nav.classList.remove("nav-links-open");
+      toggle.classList.remove("nav-toggle-open");
+      toggle.setAttribute("aria-expanded", "false");
+    });
+  });
+}
+
 renderPhotos();
 renderVideos();
 setupTabs();
+setupMobileNav();
 setupRealtime();
 recordVisit().then(() => loadVisitorStats());
+preventEasyImageSaving();
