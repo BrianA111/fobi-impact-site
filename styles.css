@@ -867,21 +867,6 @@ blockquote {
   align-items: center;
 }
 
-.contact-section .contact-card,
-.support-section .social-card {
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-}
-
-.contact-section .contact-card h2,
-.contact-section .contact-card p,
-.contact-section .contact-card strong,
-.support-section .social-card h2,
-.support-section .social-card p {
-  color: #ffffff;
-}
-
 .contact-meta {
   min-width: 240px;
 }
@@ -955,12 +940,6 @@ blockquote {
   border: 1px solid rgba(240, 90, 40, 0.14);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-}
-
-.contact-section .contact-card,
-.support-section .social-card {
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .media-section .tab-button,
