@@ -20,7 +20,18 @@
     </div>
 
     <nav class="nav">
-      <div class="nav-links" aria-label="Primary navigation">
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Open navigation menu"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <div class="nav-links" id="primary-navigation" aria-label="Primary navigation">
         <a href="#about">About</a>
         <a href="#focus">Focus</a>
         <a href="#observations">Our Observations</a>
