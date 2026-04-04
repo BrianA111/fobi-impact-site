@@ -33,8 +33,25 @@ const browserIdKey = "fobi-browser-id";
 const browserId = getOrCreateBrowserId();
 const cardRefreshers = new Map();
 const visitSessionKey = `fobi-visit-recorded:${window.location.pathname}`;
-let adminSession = null;
-let isAdminModerator = false;
+const blockedTerms = [
+  "asshole",
+  "bastard",
+  "bitch",
+  "bullshit",
+  "damn",
+  "dick",
+  "fuck",
+  "fucking",
+  "idiot",
+  "motherfucker",
+  "nigga",
+  "nigger",
+  "piss",
+  "shit",
+  "slut",
+  "stupid",
+  "whore",
+];
 
 if (window.location.hash) {
   history.replaceState(null, "", window.location.pathname + window.location.search);
@@ -61,6 +78,58 @@ function preventEasyImageSaving() {
 
 function formatDate(timestamp) {
   return new Date(timestamp).toLocaleString();
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function censorMatch(match) {
+  if (match.length <= 2) {
+    return "*".repeat(match.length);
+  }
+
+  return `${match[0]}${"*".repeat(match.length - 2)}${match.at(-1)}`;
+}
+
+function censorProfanity(value) {
+  let sanitized = value;
+
+  blockedTerms.forEach((term) => {
+    const matcher = new RegExp(`\\b${term}\\b`, "gi");
+    sanitized = sanitized.replace(matcher, (match) => censorMatch(match));
+  });
+
+  return sanitized;
+}
+
+function normalizeForModeration(value) {
+  return value
+    .toLowerCase()
+    .replaceAll("@", "a")
+    .replaceAll("4", "a")
+    .replaceAll("3", "e")
+    .replaceAll("1", "i")
+    .replaceAll("!", "i")
+    .replaceAll("0", "o")
+    .replaceAll("$", "s")
+    .replaceAll("5", "s")
+    .replaceAll("7", "t")
+    .replace(/[^a-z]/g, "");
+}
+
+function containsBlockedTerm(value) {
+  const normalized = normalizeForModeration(value);
+  return blockedTerms.some((term) => normalized.includes(term.replace(/[^a-z]/gi, "").toLowerCase()));
+}
+
+function sanitizeCommentField(value) {
+  return censorProfanity(value.trim());
 }
 
 function formatLocation(geo) {
@@ -249,30 +318,6 @@ function parseCommentPayload(rawComment) {
   }
 }
 
-async function checkAdminModerator(session) {
-  if (!session?.user) {
-    return false;
-  }
-
-  const { data, error } = await supabaseClient
-    .from("admin_users")
-    .select("user_id")
-    .eq("user_id", session.user.id)
-    .maybeSingle();
-
-  if (error) {
-    return false;
-  }
-
-  return Boolean(data);
-}
-
-function refreshAllCommentCards() {
-  cardRefreshers.forEach((refreshCard) => {
-    refreshCard?.();
-  });
-}
-
 function renderCommentList(container, comments) {
   container.innerHTML = "";
 
@@ -284,15 +329,16 @@ function renderCommentList(container, comments) {
   comments.forEach((comment) => {
     const commentEl = document.createElement("article");
     commentEl.className = "comment-item";
-    const canDelete = comment.browser_id === browserId || isAdminModerator;
+    const canDelete = comment.browser_id === browserId;
     const parsedComment = parseCommentPayload(comment.comment_text);
-    const commenterName = `${parsedComment.firstName} ${parsedComment.lastName}`.trim();
-    const commentMeta = [commenterName, parsedComment.country].filter(Boolean).join(" • ");
+    const commenterName = `${sanitizeCommentField(parsedComment.firstName)} ${sanitizeCommentField(parsedComment.lastName)}`.trim();
+    const commentMeta = [commenterName, sanitizeCommentField(parsedComment.country)].filter(Boolean).join(" • ");
+    const safeMessage = escapeHtml(censorProfanity(parsedComment.message));
     commentEl.innerHTML = `
       <div class="comment-item-top">
         <div class="comment-copy">
-          ${commentMeta ? `<p class="comment-author">${commentMeta}</p>` : ""}
-          <p>${parsedComment.message}</p>
+          ${commentMeta ? `<p class="comment-author">${escapeHtml(commentMeta)}</p>` : ""}
+          <p>${safeMessage}</p>
         </div>
         ${canDelete ? `<button class="comment-delete" type="button" data-comment-id="${comment.id}" aria-label="Delete comment">Delete</button>` : ""}
       </div>
@@ -305,16 +351,11 @@ function renderCommentList(container, comments) {
     button.addEventListener("click", async () => {
       const commentId = Number(button.dataset.commentId);
       button.disabled = true;
-      let query = supabaseClient
+      await supabaseClient
         .from("gallery_comments")
         .delete()
-        .eq("id", commentId);
-
-      if (!isAdminModerator) {
-        query = query.eq("browser_id", browserId);
-      }
-
-      await query;
+        .eq("id", commentId)
+        .eq("browser_id", browserId);
 
       const itemId = comments.find((comment) => comment.id === commentId)?.item_id;
       if (itemId) {
@@ -357,6 +398,7 @@ function buildPhotoCard(item) {
             </div>
             <label class="sr-only" for="comment-${item.id}">Write a comment</label>
             <textarea id="comment-${item.id}" name="comment" placeholder="Write a comment..." required></textarea>
+            <p class="comment-error hidden" aria-live="polite"></p>
             <button type="submit">Post</button>
           </form>
           <div class="comment-list" aria-live="polite"></div>
@@ -374,6 +416,8 @@ function buildPhotoCard(item) {
   const countryInput = article.querySelector('[name="country"]');
   const commentInput = article.querySelector("textarea");
   const commentList = article.querySelector(".comment-list");
+  const commentError = article.querySelector(".comment-error");
+  const commentSubmitButton = commentForm.querySelector("button");
 
   async function refreshCardState() {
     const [likes, liked, comments] = await Promise.all([
@@ -434,17 +478,43 @@ function buildPhotoCard(item) {
     }
   });
 
+  [firstNameInput, lastNameInput, countryInput, commentInput].forEach((field) => {
+    field.addEventListener("input", () => {
+      commentError.textContent = "";
+      commentError.classList.add("hidden");
+      const cursorPosition = field.selectionStart;
+      const censoredValue = censorProfanity(field.value);
+
+      if (field.value !== censoredValue) {
+        field.value = censoredValue;
+        if (typeof cursorPosition === "number") {
+          field.setSelectionRange(cursorPosition, cursorPosition);
+        }
+      }
+    });
+  });
+
   commentForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const firstName = firstNameInput.value.trim();
-    const lastName = lastNameInput.value.trim();
-    const country = countryInput.value.trim();
-    const text = commentInput.value.trim();
+    const firstName = sanitizeCommentField(firstNameInput.value);
+    const lastName = sanitizeCommentField(lastNameInput.value);
+    const country = sanitizeCommentField(countryInput.value);
+    const text = sanitizeCommentField(commentInput.value);
     if (!firstName || !lastName || !country || !text) {
       return;
     }
 
-    commentForm.querySelector("button").disabled = true;
+    if ([firstName, lastName, country, text].some((value) => containsBlockedTerm(value))) {
+      commentError.textContent = "Please remove inappropriate language before posting.";
+      commentError.classList.remove("hidden");
+      return;
+    }
+
+    firstNameInput.value = firstName;
+    lastNameInput.value = lastName;
+    countryInput.value = country;
+    commentInput.value = text;
+    commentSubmitButton.disabled = true;
 
     supabaseClient
       .from("gallery_comments")
@@ -464,11 +534,11 @@ function buildPhotoCard(item) {
         countryInput.value = "";
         commentInput.value = "";
         await refreshCardState();
-        commentForm.querySelector("button").disabled = false;
+        commentSubmitButton.disabled = false;
       })
       .catch((error) => {
         console.error("Comment post failed", error);
-        commentForm.querySelector("button").disabled = false;
+        commentSubmitButton.disabled = false;
       });
   });
 
@@ -648,85 +718,11 @@ function setupDesktopNavFab() {
   });
 }
 
-function setupAdminModeration() {
-  const form = document.getElementById("admin-login-form");
-  const status = document.getElementById("admin-status");
-  const signOutButton = document.getElementById("admin-sign-out");
-
-  if (!form || !status || !signOutButton) {
-    return;
-  }
-
-  const emailInput = form.querySelector('[name="email"]');
-  const passwordInput = form.querySelector('[name="password"]');
-  const submitButton = form.querySelector(".admin-submit");
-
-  function renderAdminState() {
-    const signedIn = Boolean(adminSession);
-    form.classList.toggle("admin-authenticated", signedIn);
-    signOutButton.classList.toggle("hidden", !signedIn);
-    submitButton.classList.toggle("hidden", signedIn);
-    emailInput.disabled = signedIn;
-    passwordInput.disabled = signedIn;
-
-    if (!signedIn) {
-      status.textContent = "Signed out.";
-      return;
-    }
-
-    status.textContent = isAdminModerator
-      ? `Signed in as ${adminSession.user.email}. Admin delete access is active.`
-      : `Signed in as ${adminSession.user.email}, but this account is not on the moderator allowlist.`;
-  }
-
-  async function syncAdminState(session) {
-    adminSession = session;
-    isAdminModerator = await checkAdminModerator(session);
-    renderAdminState();
-    refreshAllCommentCards();
-  }
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    submitButton.disabled = true;
-    status.textContent = "Signing in...";
-
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email: emailInput.value.trim(),
-      password: passwordInput.value,
-    });
-
-    submitButton.disabled = false;
-
-    if (error) {
-      status.textContent = error.message || "Unable to sign in.";
-      return;
-    }
-
-    passwordInput.value = "";
-  });
-
-  signOutButton.addEventListener("click", async () => {
-    signOutButton.disabled = true;
-    await supabaseClient.auth.signOut();
-    signOutButton.disabled = false;
-  });
-
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    syncAdminState(session);
-  });
-
-  supabaseClient.auth.getSession().then(({ data }) => {
-    syncAdminState(data.session);
-  });
-}
-
 renderPhotos();
 renderVideos();
 setupTabs();
 setupMobileNav();
 setupDesktopNavFab();
-setupAdminModeration();
 setupRealtime();
 recordVisit().then(() => loadVisitorStats());
 preventEasyImageSaving();
