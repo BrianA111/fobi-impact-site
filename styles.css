@@ -765,6 +765,13 @@ blockquote {
   transition: transform 180ms ease, background 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
 }
 
+.comment-error {
+  margin: 0;
+  color: #c63d12;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
 .comment-list {
   display: grid;
   gap: 0.7rem;
@@ -815,48 +822,6 @@ blockquote {
 .comment-delete:focus-visible {
   color: #8f2508;
   opacity: 0.82;
-}
-
-.admin-section .admin-card {
-  width: min(100%, 760px);
-  margin: 0 auto;
-  padding: 1.6rem;
-  border-radius: var(--radius-md);
-  background: #ffffff;
-  border: 1px solid rgba(240, 90, 40, 0.14);
-  box-shadow: var(--shadow);
-}
-
-.admin-note,
-.admin-status {
-  margin: 0 0 1rem;
-  color: var(--muted);
-}
-
-.admin-form {
-  display: grid;
-  gap: 1rem;
-}
-
-.admin-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.8rem;
-}
-
-.admin-form input {
-  width: 100%;
-  min-height: 3.1rem;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.48);
-  padding: 0.85rem 0.95rem;
-}
-
-.admin-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
 }
 
 .comment-time {
@@ -967,16 +932,9 @@ blockquote {
 
 .media-section .tab-button,
 .media-section .gallery-action,
-.media-section .comment-form button,
-.admin-section .admin-form input {
+.media-section .comment-form button {
   background: linear-gradient(135deg, #2e2e2e, #4a4a4a);
   color: #ffffff;
-}
-
-.admin-section .admin-form input {
-  background: #ffffff;
-  color: var(--ink);
-  border-color: rgba(17, 17, 17, 0.08);
 }
 
 .media-section .media-item::before,
@@ -984,7 +942,6 @@ blockquote {
 .media-section .tab-button::before,
 .media-section .gallery-action::before,
 .media-section .comment-form textarea::before,
-.admin-section .admin-card::before,
 .social-section .contact-card::before,
 .support-section .card::before,
 .social-section .social-link::before {
@@ -1225,10 +1182,6 @@ blockquote {
   }
 
   .comment-form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-form-grid {
     grid-template-columns: 1fr;
   }
 
