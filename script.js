@@ -213,6 +213,40 @@ async function fetchComments(itemId) {
   return data || [];
 }
 
+const commentPayloadPrefix = "__FOBI_COMMENT__";
+
+function serializeCommentPayload(payload) {
+  return `${commentPayloadPrefix}${JSON.stringify(payload)}`;
+}
+
+function parseCommentPayload(rawComment) {
+  if (!rawComment.startsWith(commentPayloadPrefix)) {
+    return {
+      firstName: "",
+      lastName: "",
+      country: "",
+      message: rawComment,
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(rawComment.slice(commentPayloadPrefix.length));
+    return {
+      firstName: parsed.firstName || "",
+      lastName: parsed.lastName || "",
+      country: parsed.country || "",
+      message: parsed.message || "",
+    };
+  } catch (error) {
+    return {
+      firstName: "",
+      lastName: "",
+      country: "",
+      message: rawComment,
+    };
+  }
+}
+
 function renderCommentList(container, comments) {
   container.innerHTML = "";
 
@@ -225,9 +259,15 @@ function renderCommentList(container, comments) {
     const commentEl = document.createElement("article");
     commentEl.className = "comment-item";
     const canDelete = comment.browser_id === browserId;
+    const parsedComment = parseCommentPayload(comment.comment_text);
+    const commenterName = `${parsedComment.firstName} ${parsedComment.lastName}`.trim();
+    const commentMeta = [commenterName, parsedComment.country].filter(Boolean).join(" • ");
     commentEl.innerHTML = `
       <div class="comment-item-top">
-        <p>${comment.comment_text}</p>
+        <div class="comment-copy">
+          ${commentMeta ? `<p class="comment-author">${commentMeta}</p>` : ""}
+          <p>${parsedComment.message}</p>
+        </div>
         ${canDelete ? `<button class="comment-delete" type="button" data-comment-id="${comment.id}" aria-label="Delete comment">Delete</button>` : ""}
       </div>
       <span class="comment-time">${formatDate(comment.created_at)}</span>
@@ -270,8 +310,22 @@ function buildPhotoCard(item) {
         </div>
         <div class="comment-box hidden" id="comment-box-${item.id}">
           <form class="comment-form">
+            <div class="comment-form-grid">
+              <div>
+                <label class="sr-only" for="comment-first-name-${item.id}">First name</label>
+                <input id="comment-first-name-${item.id}" name="firstName" type="text" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div>
+                <label class="sr-only" for="comment-last-name-${item.id}">Last name</label>
+                <input id="comment-last-name-${item.id}" name="lastName" type="text" placeholder="Last name" autocomplete="family-name" required>
+              </div>
+            </div>
+            <div>
+              <label class="sr-only" for="comment-country-${item.id}">Country</label>
+              <input id="comment-country-${item.id}" name="country" type="text" placeholder="Country" autocomplete="country-name" required>
+            </div>
             <label class="sr-only" for="comment-${item.id}">Write a comment</label>
-            <textarea id="comment-${item.id}" name="comment" placeholder="Write a comment..."></textarea>
+            <textarea id="comment-${item.id}" name="comment" placeholder="Write a comment..." required></textarea>
             <button type="submit">Post</button>
           </form>
           <div class="comment-list" aria-live="polite"></div>
@@ -284,6 +338,9 @@ function buildPhotoCard(item) {
   const commentToggle = article.querySelector(".comment-toggle");
   const commentBox = article.querySelector(".comment-box");
   const commentForm = article.querySelector(".comment-form");
+  const firstNameInput = article.querySelector('[name="firstName"]');
+  const lastNameInput = article.querySelector('[name="lastName"]');
+  const countryInput = article.querySelector('[name="country"]');
   const commentInput = article.querySelector("textarea");
   const commentList = article.querySelector(".comment-list");
 
@@ -342,14 +399,17 @@ function buildPhotoCard(item) {
     const isHidden = commentBox.classList.toggle("hidden");
     commentToggle.setAttribute("aria-expanded", String(!isHidden));
     if (!isHidden) {
-      commentInput.focus();
+      firstNameInput.focus();
     }
   });
 
   commentForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    const firstName = firstNameInput.value.trim();
+    const lastName = lastNameInput.value.trim();
+    const country = countryInput.value.trim();
     const text = commentInput.value.trim();
-    if (!text) {
+    if (!firstName || !lastName || !country || !text) {
       return;
     }
 
@@ -360,9 +420,17 @@ function buildPhotoCard(item) {
       .insert({
         item_id: item.id,
         browser_id: browserId,
-        comment_text: text,
+        comment_text: serializeCommentPayload({
+          firstName,
+          lastName,
+          country,
+          message: text,
+        }),
       })
       .then(async () => {
+        firstNameInput.value = "";
+        lastNameInput.value = "";
+        countryInput.value = "";
         commentInput.value = "";
         await refreshCardState();
         commentForm.querySelector("button").disabled = false;
