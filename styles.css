@@ -729,14 +729,28 @@ blockquote {
   gap: 0.7rem;
 }
 
+.comment-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.comment-form input,
 .comment-form textarea {
   width: 100%;
-  min-height: 84px;
-  resize: vertical;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.48);
   padding: 0.85rem 0.95rem;
+}
+
+.comment-form input {
+  min-height: 3rem;
+}
+
+.comment-form textarea {
+  min-height: 84px;
+  resize: vertical;
 }
 
 .comment-form button {
@@ -765,6 +779,18 @@ blockquote {
 .comment-item p,
 .comment-empty {
   margin: 0;
+}
+
+.comment-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.comment-author {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--ink);
 }
 
 .comment-item-top {
@@ -887,6 +913,7 @@ blockquote {
 .contact-section .contact-card,
 .media-section .media-item,
 .media-section .comment-form textarea,
+.media-section .comment-form input,
 .social-section .contact-card,
 .support-section .card,
 .social-section .social-link {
@@ -1148,6 +1175,10 @@ blockquote {
     text-align: center;
   }
 
+  .comment-form-grid {
+    grid-template-columns: 1fr;
+  }
+
   .contact-card,
   .support-grid,
   .two-column,
@@ -1168,4 +1199,4 @@ blockquote {
   .desktop-nav-fab {
     display: inline-flex;
   }
-}s
+}
