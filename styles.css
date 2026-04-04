@@ -736,6 +736,7 @@ blockquote {
 }
 
 .comment-form input,
+.comment-form select,
 .comment-form textarea {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -744,8 +745,15 @@ blockquote {
   padding: 0.85rem 0.95rem;
 }
 
-.comment-form input {
+.comment-form input,
+.comment-form select {
   min-height: 3rem;
+}
+
+.comment-form select {
+  appearance: none;
+  cursor: pointer;
+  color: var(--ink);
 }
 
 .comment-form textarea {
