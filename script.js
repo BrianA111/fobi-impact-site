@@ -504,10 +504,56 @@ function setupMobileNav() {
   });
 }
 
+function setupDesktopNavFab() {
+  const toggle = document.querySelector(".desktop-nav-fab");
+  const panel = document.querySelector(".desktop-nav-panel");
+
+  if (!toggle || !panel) {
+    return;
+  }
+
+  function setPanelState(open) {
+    panel.classList.toggle("desktop-nav-panel-open", open);
+    toggle.classList.toggle("desktop-nav-fab-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close quick navigation" : "Open quick navigation");
+  }
+
+  toggle.addEventListener("click", () => {
+    const open = !panel.classList.contains("desktop-nav-panel-open");
+    setPanelState(open);
+  });
+
+  panel.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      setPanelState(false);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!toggle.contains(event.target) && !panel.contains(event.target)) {
+      setPanelState(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setPanelState(false);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth <= 640) {
+      setPanelState(false);
+    }
+  });
+}
+
 renderPhotos();
 renderVideos();
 setupTabs();
 setupMobileNav();
+setupDesktopNavFab();
 setupRealtime();
 recordVisit().then(() => loadVisitorStats());
 preventEasyImageSaving();
