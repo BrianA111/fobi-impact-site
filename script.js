@@ -52,6 +52,203 @@ const blockedTerms = [
   "stupid",
   "whore",
 ];
+const countryOptions = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cabo Verde",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Colombia",
+  "Comoros",
+  "Congo",
+  "Costa Rica",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czechia",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "DR Congo",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Eswatini",
+  "Ethiopia",
+  "Fiji",
+  "Finland",
+  "France",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Greece",
+  "Grenada",
+  "Guatemala",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Honduras",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
+  "Mexico",
+  "Micronesia",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "North Korea",
+  "North Macedonia",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Palestine",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South Korea",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor-Leste",
+  "Togo",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Vatican City",
+  "Venezuela",
+  "Vietnam",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
+];
 
 if (window.location.hash) {
   history.replaceState(null, "", window.location.pathname + window.location.search);
@@ -130,6 +327,14 @@ function containsBlockedTerm(value) {
 
 function sanitizeCommentField(value) {
   return censorProfanity(value.trim());
+}
+
+function buildCountryOptionsMarkup() {
+  return countryOptions
+    .slice()
+    .sort((a, b) => a.localeCompare(b))
+    .map((country) => `<option value="${escapeHtml(country)}">${escapeHtml(country)}</option>`)
+    .join("");
 }
 
 function formatLocation(geo) {
@@ -394,7 +599,10 @@ function buildPhotoCard(item) {
             </div>
             <div>
               <label class="sr-only" for="comment-country-${item.id}">Country</label>
-              <input id="comment-country-${item.id}" name="country" type="text" placeholder="Country" autocomplete="country-name" required>
+              <select id="comment-country-${item.id}" name="country" required>
+                <option value="">Select country</option>
+                ${buildCountryOptionsMarkup()}
+              </select>
             </div>
             <label class="sr-only" for="comment-${item.id}">Write a comment</label>
             <textarea id="comment-${item.id}" name="comment" placeholder="Write a comment..." required></textarea>
@@ -478,7 +686,7 @@ function buildPhotoCard(item) {
     }
   });
 
-  [firstNameInput, lastNameInput, countryInput, commentInput].forEach((field) => {
+  [firstNameInput, lastNameInput, commentInput].forEach((field) => {
     field.addEventListener("input", () => {
       commentError.textContent = "";
       commentError.classList.add("hidden");
@@ -494,13 +702,27 @@ function buildPhotoCard(item) {
     });
   });
 
+  countryInput.addEventListener("change", () => {
+    commentError.textContent = "";
+    commentError.classList.add("hidden");
+  });
+
   commentForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const firstName = sanitizeCommentField(firstNameInput.value);
     const lastName = sanitizeCommentField(lastNameInput.value);
-    const country = sanitizeCommentField(countryInput.value);
+    const country = countryInput.value.trim();
     const text = sanitizeCommentField(commentInput.value);
     if (!firstName || !lastName || !country || !text) {
+      commentError.textContent = "Please fill in every field before posting.";
+      commentError.classList.remove("hidden");
+      commentForm.reportValidity();
+      return;
+    }
+
+    if (!countryOptions.includes(country)) {
+      commentError.textContent = "Please choose a valid country from the list.";
+      commentError.classList.remove("hidden");
       return;
     }
 
@@ -512,7 +734,6 @@ function buildPhotoCard(item) {
 
     firstNameInput.value = firstName;
     lastNameInput.value = lastName;
-    countryInput.value = country;
     commentInput.value = text;
     commentSubmitButton.disabled = true;
 
