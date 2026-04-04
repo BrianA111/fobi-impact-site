@@ -70,6 +70,7 @@ textarea {
 
 .site-header {
   padding-top: 1.25rem;
+  position: relative;
 }
 
 .site-title-block {
@@ -117,7 +118,9 @@ textarea {
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 999px;
   box-shadow: var(--shadow);
-  position: relative;
+  position: sticky;
+  top: 1rem;
+  z-index: 1000;
 }
 
 .nav-toggle {
@@ -901,6 +904,7 @@ blockquote {
     border-radius: 28px;
     padding: 0.8rem 0.9rem;
     justify-content: space-between;
+    margin-bottom: 1.25rem;
   }
 
   .site-title-block {
@@ -1007,7 +1011,7 @@ blockquote {
     border: 1px solid rgba(17, 17, 17, 0.08);
     border-radius: 20px;
     box-shadow: 0 16px 40px rgba(17, 17, 17, 0.08);
-    z-index: 10;
+    z-index: 1001;
   }
 
   .nav-links.nav-links-open {
