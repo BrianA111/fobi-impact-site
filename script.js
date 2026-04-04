@@ -368,24 +368,71 @@ function getOrCreateBrowserId() {
   return created;
 }
 
-async function fetchVisitorGeo() {
-  try {
-    const response = await fetch("https://ipwho.is/");
-    const data = await response.json();
+async function fetchJsonWithTimeout(url, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-    if (!data.success) {
-      throw new Error("Geo lookup failed");
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
     }
 
+    return await response.json();
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+function normalizeGeoResponse(data) {
+  return {
+    country: data.country?.trim() || data.country_name?.trim() || "",
+    region: data.region?.trim() || data.regionName?.trim() || "",
+    city: data.city?.trim() || "",
+  };
+}
+
+async function fetchVisitorGeo() {
+  const providers = [
+    async () => {
+      const data = await fetchJsonWithTimeout("https://ipwho.is/");
+      if (!data.success) {
+        throw new Error("ipwho.is lookup failed");
+      }
+
+      return normalizeGeoResponse(data);
+    },
+    async () => {
+      const data = await fetchJsonWithTimeout("https://ipapi.co/json/");
+      if (data.error) {
+        throw new Error("ipapi lookup failed");
+      }
+
+      return normalizeGeoResponse(data);
+    },
+  ];
+
+  for (const provider of providers) {
+    try {
+      const geo = await provider();
+      if (geo.country || geo.region || geo.city) {
+        return geo;
+      }
+    } catch (error) {
+      continue;
+    }
+  }
+
+  try {
     return {
-      country: data.country || "",
-      region: data.region || "",
-      city: data.city || "",
+      country: "Unavailable",
+      region: "Unavailable",
+      city: "",
     };
   } catch (error) {
     return {
-      country: "",
-      region: "",
+      country: "Unavailable",
+      region: "Unavailable",
       city: "",
     };
   }
