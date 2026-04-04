@@ -11,26 +11,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
   <header class="site-header">
     <div class="site-title-block">
-      <a href="#top" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
-        <img class="site-title-logo" src="LOGO.png" alt="FOBI Impact logo">
-        <div class="site-title-copy">
-          <h1 class="site-title" style="margin: 0;">FOBI</h1>
-          <small style="display: block; font-size: 0.8rem; opacity: 0.8; font-family: 'Manrope', sans-serif;">Health Outreach Project</small>
-        </div>
-      </a>
+      <img class="site-title-logo" src="LOGO.png" alt="FOBI Impact logo">
+      <div class="site-title-copy">
+        <h1 class="site-title">FOBI</h1>
+      </div>
     </div>
 
     <nav class="nav">
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <div class="nav-links" id="primary-navigation" aria-label="Primary navigation">
+      <div class="nav-links" aria-label="Primary navigation">
         <a href="#about">About</a>
         <a href="#focus">Focus</a>
         <a href="#observations">Our Observations</a>
@@ -40,9 +30,7 @@
         <a href="#contact">Contact</a>
       </div>
     </nav>
-  </header>
 
-  <main id="main-content">
     <section class="hero" id="top">
       <div class="hero-copy">
         <p class="eyebrow">Poverty and Inequality (Health Arm)</p>
@@ -65,8 +53,11 @@
           <p>Raise awareness and show practical compassion through healthcare-centered outreach.</p>
         </div>
       </aside>
-    </section>
 
+    </section>
+  </header>
+
+  <main id="main-content">
     <section class="section intro" id="about">
       <div class="section-heading">
         <p class="eyebrow">Why This Matters</p>
@@ -170,18 +161,18 @@
         </article>
         <article class="impact-card observation-card">
           <h3>Oyindamola Akanle</h3>
-          <p><strong>Observed:</strong> I learned that rehabilitation centers are not places for people who are dangerous, but rather support systems similar to hospitals. External factors, such as negative comments or societal attitudes, can slow down patients’ progress.</p>
-          <p><strong>Needs Improvement:</strong> Rehabilitation centers should be normalized and viewed the same way as hospitals.</p>
+          <p><strong>Observed:I learned that rehabilitation centers are not places for people who are dangerous, but rather support systems similar to hospitals. External factors, such as negative comments or societal attitudes, can slow down patients’ progress, as noted by a doctor we spoke to. Before this experience, I personally held misconceptions and viewed some individuals as “crazy,” which reflects how widespread this misunderstanding is.</strong></p>
+          <p><strong>Needs Improvement:Rehabilitation centers should be normalized and viewed the same way as hospitals. Public education needs to challenge harmful stereotypes and language, while promoting empathy and accurate understanding of mental and physical disabilities.</strong></p>
         </article>
         <article class="impact-card observation-card">
           <h3>Imara Williams</h3>
-          <p><strong>Observed:</strong> I’ve noticed there is a strong stigma around people with disabilities. Economic conditions affect how well these institutions can operate, as they rely heavily on donations.</p>
-          <p><strong>Needs Improvement:</strong> Schools and communities should create opportunities for direct interaction and volunteering.</p>
+          <p><strong>Observed:From our trips, I’ve noticed there is a strong stigma around people with disabilities. Many people assume they are isolated in care homes or “safety resorts.” From a short Google Form Imara and I conducted (not for final submission), it was clear that awareness exists, but understanding is shallow. At places like Modupe Treatment Center, we saw that not everyone is guaranteed a stable future, family support, or employment. While a few individuals are able to turn their abilities into income (like the girl who creates art with her legs), these cases are rare. Economic conditions, especially with Nigeria’s current recession, also affect how well these institutions can operate, as they rely heavily on donations from the public.</strong></p>
+          <p><strong>Needs Improvement:There needs to be more practical awareness. Schools and communities should create opportunities for direct interaction, volunteering, and learning. This would help reduce fear, discomfort, and stereotypes, allowing people to become more inclusive and understanding.</strong></p>
         </article>
         <article class="impact-card observation-card observation-card-wide-name">
           <h3>Mokunfayo Odusanya</h3>
-          <p><strong>Observed:</strong> (Pending Entry)</p>
-          <p><strong>Needs Improvement:</strong> (Pending Entry)</p>
+          <p><strong>Observed:</strong></p>
+          <p><strong>Needs Improvement:</strong></p>
         </article>
       </div>
     </section>
@@ -191,10 +182,12 @@
         <p class="eyebrow">Gallery</p>
         <h2>FOBI In Action</h2>
       </div>
+
       <div class="media-tabs" role="tablist" aria-label="Gallery tabs">
         <button class="tab-button active" type="button" data-tab="photos" role="tab" aria-selected="true">Photos</button>
         <button class="tab-button" type="button" data-tab="videos" role="tab" aria-selected="false">Videos</button>
       </div>
+
       <div class="media-grid" id="photos-panel" role="tabpanel" aria-label="Photo gallery"></div>
       <div class="media-grid hidden" id="videos-panel" role="tabpanel" aria-label="Video gallery"></div>
     </section>
@@ -233,24 +226,30 @@
         <article class="card">
           <p>
             If you are trying to support, you can reach out to The Olive Prime Psychological Services Lagos and Modupe Cole
-            Orphanage. Many more institutions across Nigeria still need help.
+            Orphanage. However, please do not be misguided into thinking they are the only ones in need. Many more people
+            and institutions across Nigeria, and even worldwide, still need help.
           </p>
         </article>
         <article class="card">
-          <p><strong>No help is too small;</strong> it truly goes a long way. If you cannot give material support, spread awareness and encourage others to care.</p>
+          <p>
+  <strong>No help is too small;</strong> it truly goes a long way. If you are not in a position to give material support, that is
+  completely fine. You can still make a difference by spreading awareness and encouraging others to care.
+</p>
         </article>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>FOBI: Building a better tomorrow through care, support, and awareness – join us in making a difference!</p>
-    <p>© <span id="year"></span> FOBI IMPACT. All rights reserved.</p>
+    <p>FOBI building a better tomorrow through care, support, and awareness – join us in making a difference!</p>
   </footer>
+  <footer>
+  <p>© <span id="year"></span> FOBI IMPACT. All rights reserved.</p>
+</footer>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
