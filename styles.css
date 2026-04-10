@@ -1,1230 +1,1184 @@
-:root {
-  --bg: #ffffff;
-  --surface: rgba(255, 255, 255, 0.42);
-  --surface-strong: rgba(255, 255, 255, 0.7);
-  --ink: #1c1736;
-  --muted: #5f577d;
-  --accent: #f05a28;
-  --accent-strong: #c63d12;
-  --accent-soft: #ffe3d7;
-  --highlight: #00a6a6;
-  --border: rgba(255, 255, 255, 0.34);
-  --shadow: 0 24px 80px rgba(40, 25, 88, 0.12);
-  --radius-lg: 28px;
-  --radius-md: 20px;
-  --radius-sm: 14px;
-  --max-width: 1180px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: "Manrope", sans-serif;
-  color: var(--ink);
-  background:
-    radial-gradient(circle at 12% 18%, rgba(0, 166, 166, 0.06), transparent 20%),
-    radial-gradient(circle at 82% 14%, rgba(240, 90, 40, 0.12), transparent 22%),
-    radial-gradient(circle at 50% 80%, rgba(31, 160, 255, 0.1), transparent 25%),
-    linear-gradient(180deg, #ffffff 0%, #f7fbff 48%, #fff7f3 100%);
-  line-height: 1.6;
-}
-
-img,
-video {
-  display: block;
-  max-width: 100%;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input,
-textarea {
-  font: inherit;
-}
-
-.site-header,
-.section,
-.site-footer {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-.nav,
-.hero,
-.section > *,
-.site-footer {
-  width: min(100%, var(--max-width));
-  margin: 0 auto;
-}
-
-.site-header {
-  padding-top: 1.25rem;
-  position: relative;
-}
-
-.site-title-block {
-  width: min(100%, var(--max-width));
-  margin: 0.85rem auto 1.35rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-  position: relative;
-}
-
-.site-title-logo {
-  width: clamp(5.5rem, 10vw, 8rem);
-  height: clamp(5.5rem, 10vw, 8rem);
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.site-title-copy {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-}
-
-.site-title {
-  margin: 0;
-  font-size: clamp(4.2rem, 11vw, 8.5rem);
-  line-height: 0.9;
-  letter-spacing: 0.04em;
-  text-align: center;
-  text-shadow: 0 8px 24px rgba(255, 255, 255, 0.55);
-}
-
-.nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.85rem 1.15rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.42));
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 999px;
-  box-shadow: var(--shadow);
-  position: relative;
-  z-index: 20;
-}
-
-.nav-toggle {
-  display: none;
-  width: 3rem;
-  height: 3rem;
-  border: 1px solid rgba(17, 17, 17, 0.12);
-  border-radius: 16px;
-  background: #ffffff;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0;
-  flex-shrink: 0;
-  transition: box-shadow 180ms ease, transform 180ms ease;
-}
-
-.nav-toggle span {
-  width: 1.2rem;
-  height: 2px;
-  border-radius: 999px;
-  background: #111111;
-  transition: transform 180ms ease, opacity 180ms ease;
-}
-
-.nav-toggle:hover,
-.nav-toggle:focus-visible {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.12);
-}
-
-.nav-toggle-open span:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-}
-
-.nav-toggle-open span:nth-child(2) {
-  opacity: 0;
-}
-
-.nav-toggle-open span:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
-}
-
-.desktop-nav-fab,
-.desktop-nav-panel {
-  display: none;
-}
-
-.desktop-nav-fab {
-  position: fixed;
-  left: 1.35rem;
-  bottom: 1.35rem;
-  width: 3.1rem;
-  height: 3.1rem;
-  border: 0;
-  border-radius: 999px;
-  background: #111111;
-  box-shadow: 0 18px 40px rgba(17, 17, 17, 0.22);
-  cursor: pointer;
-  z-index: 1100;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0.28rem;
-  padding: 0;
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-
-.desktop-nav-fab span {
-  width: 1.1rem;
-  height: 2px;
-  border-radius: 999px;
-  background: #ffffff;
-  transition: transform 180ms ease, opacity 180ms ease;
-}
-
-.desktop-nav-fab:hover,
-.desktop-nav-fab:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 22px 44px rgba(17, 17, 17, 0.28);
-}
-
-.desktop-nav-fab.desktop-nav-fab-open span:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-}
-
-.desktop-nav-fab.desktop-nav-fab-open span:nth-child(2) {
-  opacity: 0;
-}
-
-.desktop-nav-fab.desktop-nav-fab-open span:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
-}
-
-.desktop-nav-panel {
-  position: fixed;
-  left: 1.35rem;
-  bottom: 5.15rem;
-  width: min(16rem, calc(100vw - 2.7rem));
-  padding: 0.7rem;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(17, 17, 17, 0.08);
-  border-radius: 20px;
-  box-shadow: 0 18px 46px rgba(17, 17, 17, 0.16);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  z-index: 1099;
-}
-
-.desktop-nav-panel.desktop-nav-panel-open {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.desktop-nav-panel a {
-  display: block;
-  padding: 0.75rem 0.9rem;
-  border-radius: 14px;
-  background: #f8f8f8;
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.nav-links a,
-.section-subtext,
-.site-footer,
-.hero-text,
-.panel-note p,
-.card p,
-.feature-card p,
-.impact-card p,
-.contact-card p {
-  color: var(--muted);
-}
-
-.social-link small {
-  color: var(--muted);
-}
-
-.nav-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.nav-links a {
-  font-weight: 600;
-}
-
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
-  gap: 1.5rem;
-  align-items: stretch;
-  padding-top: 4rem;
-  padding-bottom: 3rem;
-}
-
-.hero-copy,
-.hero-panel,
-.card,
-.feature-card,
-.impact-card,
-.statement-box,
-.contact-card,
-.media-item,
-.empty-state {
-  background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-copy::before,
-.hero-panel::before,
-.card::before,
-.feature-card::before,
-.impact-card::before,
-.statement-box::before,
-.contact-card::before,
-.media-item::before,
-.empty-state::before,
-.social-link::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.42), transparent 45%),
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.5), transparent 32%);
-  pointer-events: none;
-}
-
-.hero-copy {
-  padding: 2.5rem;
-  border-radius: var(--radius-lg);
-}
-
-.hero-panel {
-  padding: 2rem;
-  border-radius: var(--radius-lg);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-panel::after {
-  content: "";
-  position: absolute;
-  inset: auto -2rem -2rem auto;
-  width: 10rem;
-  height: 10rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 166, 166, 0.24), transparent 65%);
-}
-
-.eyebrow {
-  margin: 0 0 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: var(--accent);
-}
-
-h1,
-h2,
-h3,
-blockquote {
-  margin: 0;
-  font-family: "Newsreader", serif;
-  line-height: 1.05;
-}
-
-.hero-title {
-  font-size: clamp(2.2rem, 4vw, 3.8rem);
-  margin-bottom: 1rem;
-}
-
-.hero-title-centered,
-.hero-text-centered,
-.section-title-centered {
-  text-align: center;
-}
-
-h1 {
-  font-size: clamp(2.9rem, 5vw, 5.3rem);
-  margin-bottom: 1rem;
-}
-
-h2 {
-  font-size: clamp(2rem, 3vw, 3.2rem);
-}
-
-h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.hero-text {
-  max-width: 60ch;
-  font-size: 1.08rem;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
-  margin-top: 1.8rem;
-}
-
-.button {
-  padding: 0.95rem 1.4rem;
-  border-radius: 999px;
-  font-weight: 700;
-  transition: transform 180ms ease, background 220ms ease, color 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  box-shadow: 0 12px 30px rgba(17, 17, 17, 0.14);
-}
-
-.button:hover,
-.button:focus-visible,
-.tab-button:hover,
-.tab-button:focus-visible {
-  transform: translateY(-2px);
-}
-
-.button-primary {
-  background: linear-gradient(135deg, #ff6b2c, #ff2d55);
-  color: #fff;
-}
-
-.button-secondary {
-  background: linear-gradient(135deg, #111111, #303030);
-  border: 1px solid #111111;
-  color: #ffffff;
-}
-
-.panel-title {
-  margin-top: 0;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.team-list {
-  padding-left: 1.1rem;
-  margin: 1rem 0 1.5rem;
-}
-
-.section {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
-}
-
-.section-heading {
-  margin-bottom: 1.5rem;
-}
-
-.section-heading.light .eyebrow,
-.section-heading.light h2 {
-  color: #fff;
-}
-
-.two-column,
-.impact-grid,
-.feature-list,
-.visitor-grid,
-.media-grid {
-  display: grid;
-  gap: 1.25rem;
-}
-
-.two-column {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.card,
-.feature-card,
-.impact-card,
-.statement-box,
-.contact-card,
-.social-link,
-.media-item,
-.empty-state {
-  border-radius: var(--radius-md);
-}
-
-.card,
-.feature-card,
-.impact-card,
-.contact-card,
-.empty-state {
-  padding: 1.6rem;
-}
-
-.support-grid .card {
-  min-height: 100%;
-}
-
-.support-emphasis {
-  font-weight: 800;
-  color: #111111;
-}
-
-.focus-band {
-  background:
-    linear-gradient(135deg, rgba(102, 187, 106, 0.96), rgba(152, 222, 120, 0.9)),
-    linear-gradient(180deg, #66bb6a, #98de78);
-  color: #111111;
-}
-
-.observations-band {
-  background:
-    linear-gradient(135deg, rgba(0, 111, 214, 0.96), rgba(31, 160, 255, 0.88)),
-    linear-gradient(180deg, #005fbe, #1f9fff);
-  color: #fff;
-}
-
-.observation-card {
-  background: rgba(255, 255, 255, 0.18);
-}
-
-.observation-card p {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.media-section .section-heading .eyebrow {
-  color: #d62828 !important;
-}
-
-.media-section .section-heading h2 {
-  color: #111111 !important;
-}
-
-
-.observation-card-wide-name h3 {
-  font-size: 1.35rem;
-}
-
-.impact-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.visitor-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.visitor-card {
-  min-height: 100%;
-}
-
-.visitor-label {
-  margin: 0 0 0.45rem;
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 800;
-  color: var(--accent);
-}
-
-.visitor-value {
-  margin: 0;
-  font-family: "Newsreader", serif;
-  font-size: clamp(1.7rem, 3vw, 2.4rem);
-  line-height: 1.1;
-  color: var(--ink);
-}
-
-.visitor-value-small {
-  font-size: 1.05rem;
-  line-height: 1.45;
-}
-
-.impact-card {
-  min-height: 100%;
-}
-
-.feature-list {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.feature-number {
-  display: inline-block;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  color: var(--highlight);
-}
-
-.statement-box {
-  padding: 1.1rem 1.2rem;
-  width: min(100%, 860px);
-  background: #ffffff;
-  border: 1px solid rgba(240, 90, 40, 0.14);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.statement-box::before {
-  display: none;
-}
-
-.statement-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 0;
-  align-items: center;
-}
-
-.statement-copy {
-  min-width: 0;
-}
-
-.statement-image {
-  width: 100%;
-  max-height: 360px;
-  aspect-ratio: 4 / 5;
-  object-fit: contain;
-  align-self: center;
-}
-
-blockquote {
-  font-size: 1.18rem;
-  font-weight: 400;
-  line-height: 1.45;
-  max-width: 36ch;
-}
-
-.media-tabs {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-
-.tab-button {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.42);
-  color: var(--ink);
-  padding: 0.8rem 1.1rem;
-  border-radius: 999px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 180ms ease, background 240ms ease, color 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
-}
-
-.tab-button.active {
-  background: linear-gradient(135deg, #2e2e2e, #4a4a4a);
-  color: #fff;
-  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
-}
-
-.media-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.media-item {
-  overflow: hidden;
-}
-
-.media-item figure {
-  margin: 0;
-}
-
-.media-item img,
-.media-item video {
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  width: 100%;
-  background: #d8ddd8;
-}
-
-.media-item figcaption {
-  padding: 1rem 1rem 1.2rem;
-}
-
-.media-caption p {
-  margin-top: 0;
-  margin-bottom: 0.9rem;
-}
-
-.gallery-actions {
-  display: flex;
-  gap: 0.65rem;
-  align-items: center;
-  margin-bottom: 0.85rem;
-}
-
-.gallery-action {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.44);
-  color: var(--ink);
-  border-radius: 999px;
-  padding: 0.55rem 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 180ms ease, background 240ms ease, color 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
-}
-
-.gallery-action:hover,
-.gallery-action:focus-visible {
-  transform: translateY(-2px);
-}
-
-.gallery-action:disabled {
-  cursor: not-allowed;
-  opacity: 0.88;
-  transform: none;
-  box-shadow: none;
-}
-
-.gallery-action.active {
-  background: linear-gradient(135deg, #2e2e2e, #4a4a4a);
-  color: #fff;
-  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
-}
-
-.comment-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.comment-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 50%;
-  background: rgba(240, 90, 40, 0.14);
-  font-size: 0.9rem;
-  line-height: 1;
-}
-
-.comment-box {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.comment-form {
-  display: grid;
-  gap: 0.7rem;
-}
-
-.comment-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
-}
-
-.comment-form input,
-.comment-form select,
-.comment-form textarea {
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.48);
-  padding: 0.85rem 0.95rem;
-}
-
-.comment-form input,
-.comment-form select {
-  min-height: 3rem;
-}
-
-.comment-form select {
-  appearance: none;
-  cursor: pointer;
-  color: var(--ink);
-}
-
-.comment-form textarea {
-  min-height: 84px;
-  resize: vertical;
-}
-
-.comment-form button {
-  width: fit-content;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #2e2e2e, #4a4a4a);
-  color: #fff;
-  padding: 0.65rem 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 180ms ease, background 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
-}
-
-.comment-error {
-  margin: 0;
-  color: #c63d12;
-  font-size: 0.92rem;
-  font-weight: 600;
-}
-
-.comment-list {
-  display: grid;
-  gap: 0.7rem;
-}
-
-.comment-item {
-  padding: 0.8rem 0.9rem;
-  border-radius: var(--radius-sm);
-  background: rgba(240, 90, 40, 0.08);
-}
-
-.comment-item p,
-.comment-empty {
-  margin: 0;
-}
-
-.comment-copy {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.comment-author {
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  color: var(--ink);
-}
-
-.comment-item-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 0.75rem;
-}
-
-.comment-delete {
-  border: 0;
-  background: transparent;
-  color: #c63d12;
-  cursor: pointer;
-  font-weight: 700;
-  padding: 0;
-  flex-shrink: 0;
-  transition: opacity 180ms ease, color 180ms ease;
-}
-
-.comment-delete:hover,
-.comment-delete:focus-visible {
-  color: #8f2508;
-  opacity: 0.82;
-}
-
-.comment-time {
-  display: inline-block;
-  margin-top: 0.35rem;
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.empty-state {
-  border: 2px dashed rgba(240, 90, 40, 0.3);
-  background: rgba(255, 247, 242, 0.62);
-}
-
-.hidden {
-  display: none;
-}
-
-.contact-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(220px, 320px) minmax(240px, 0.85fr);
-  gap: 1.5rem;
-  align-items: center;
-  justify-items: center;
-}
-
-.contact-meta {
-  min-width: 240px;
-  text-align: center;
-}
-
-.identity-photo {
-  width: 100%;
-  max-width: 320px;
-  margin: 0 auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: 20px;
-}
-
-.identity-heading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.identity-logo {
-  width: 5.25rem;
-  height: 5.25rem;
-  object-fit: cover;
-  border-radius: 22px;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 14px 30px rgba(18, 31, 29, 0.14);
-}
-
-.identity-tagline {
-  margin-top: 0.4rem;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.social-card {
-  align-items: stretch;
-  margin-bottom: 1.1rem;
-  box-shadow: 0 18px 46px rgba(17, 17, 17, 0.18);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.social-links {
-  display: grid;
-  gap: 1rem;
-  min-width: min(100%, 360px);
-  width: min(100%, 360px);
-  margin: 0 auto;
-}
-
-.social-link {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.1rem;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(28, 23, 54, 0.08);
-  box-shadow: 0 10px 28px rgba(40, 25, 88, 0.06);
-  backdrop-filter: blur(8px) saturate(112%);
-  -webkit-backdrop-filter: blur(8px) saturate(112%);
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-
-.contact-section .contact-card,
-.media-section .media-item,
-.media-section .comment-form textarea,
-.media-section .comment-form input,
-.social-section .contact-card,
-.support-section .card,
-.social-section .social-link {
-  background: #ffffff;
-  border: 1px solid rgba(240, 90, 40, 0.14);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.media-section .tab-button,
-.media-section .gallery-action,
-.media-section .comment-form button {
-  background: linear-gradient(135deg, #2e2e2e, #4a4a4a);
-  color: #ffffff;
-}
-
-.media-section .media-item::before,
-.contact-section .contact-card::before,
-.media-section .tab-button::before,
-.media-section .gallery-action::before,
-.media-section .comment-form textarea::before,
-.social-section .contact-card::before,
-.support-section .social-card::before,
-.support-section .card::before,
-.social-section .social-link::before {
-  display: none;
-}
-
-.social-link:hover,
-.social-link:focus-visible {
-  transform: translateY(-2px);
-}
-
-.social-link span:last-child {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.25;
-}
-
-.support-section {
-  padding-top: 1.55rem;
-}
-
-.social-icon {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-
-.social-icon svg {
-  width: 1.4rem;
-  height: 1.4rem;
-  fill: currentColor;
-}
-
-.instagram .social-icon {
-  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
-  color: #fff;
-}
-
-.youtube .social-icon {
-  background: #ff0000;
-  color: #fff;
-}
-
-.site-footer {
-  padding-top: 0.5rem;
-  padding-bottom: 2.5rem;
-  text-align: center;
-}
-
-.copyright-notice {
-  margin-top: 0.45rem;
-  font-size: 0.92rem;
-  opacity: 0.9;
-}
-
-@media (max-width: 980px) {
-  .hero,
-  .two-column,
-  .impact-grid,
-  .feature-list,
-  .visitor-grid,
-  .statement-layout,
-  .media-grid,
-  .contact-card {
-    grid-template-columns: 1fr;
+const photoItems = [
+  {
+    id: "outreach-2b",
+    src: "IMG_20260325_120315_492.jpg",
+    alt: "FOBI outreach photo five",
+    caption: "Another moment captured during the FOBI outreach visit.",
+  },
+  {
+    id: "outreach-1",
+    src: "IMG_20260325_101536_320.jpg",
+    alt: "FOBI outreach photo one",
+    caption: "A moment from the FOBI health outreach visit.",
+  },
+  {
+    id: "outreach-2",
+    src: "IMG_20260325_104646_893.jpg",
+    alt: "FOBI outreach photo two",
+    caption: "Support, care, and presence during the outreach project.",
+  },
+];
+
+const videoItems = [
+  {
+    id: "olive-prime-interview",
+    src: "assets/videos/olive-prime-interview-web.mov",
+    caption: "Imara and Oyinda conducting an interview with The Olive Prime Psychological Services Lagos.",
+  },
+];
+
+const SUPABASE_URL = "https://fsxzmnulugyteljsqmqc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzeHptbnVsdWd5dGVsanNxbXFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzUyMDMsImV4cCI6MjA5MDgxMTIwM30.SU719V9-_MKugPC6E2b0E7w1oAI55CgOrZWuNdum0_g";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const browserIdKey = "fobi-browser-id";
+const browserId = getOrCreateBrowserId();
+const cardRefreshers = new Map();
+const visitSessionKey = `fobi-visit-recorded:${window.location.pathname}`;
+const blockedTerms = [
+  "asshole",
+  "bastard",
+  "bitch",
+  "bullshit",
+  "damn",
+  "dick",
+  "fuck",
+  "fucking",
+  "idiot",
+  "motherfucker",
+  "nigga",
+  "nigger",
+  "piss",
+  "shit",
+  "slut",
+  "stupid",
+  "whore",
+];
+const countryOptions = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cabo Verde",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Colombia",
+  "Comoros",
+  "Congo",
+  "Costa Rica",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czechia",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "DR Congo",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Eswatini",
+  "Ethiopia",
+  "Fiji",
+  "Finland",
+  "France",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Greece",
+  "Grenada",
+  "Guatemala",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Honduras",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
+  "Mexico",
+  "Micronesia",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "North Korea",
+  "North Macedonia",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Palestine",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South Korea",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor-Leste",
+  "Togo",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Vatican City",
+  "Venezuela",
+  "Vietnam",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
+];
+
+if (window.location.hash) {
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+}
+
+window.addEventListener("load", () => {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+});
+
+function createEmptyState(message) {
+  const item = document.createElement("article");
+  item.className = "empty-state";
+  item.innerHTML = `<p>${message}</p>`;
+  return item;
+}
+
+function preventEasyImageSaving() {
+  document.querySelectorAll("img").forEach((img) => {
+    img.setAttribute("draggable", "false");
+    img.addEventListener("dragstart", (event) => event.preventDefault());
+    img.addEventListener("contextmenu", (event) => event.preventDefault());
+  });
+}
+
+function formatDate(timestamp) {
+  return new Date(timestamp).toLocaleString();
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function censorMatch(match) {
+  if (match.length <= 2) {
+    return "*".repeat(match.length);
   }
 
-  .hero {
-    padding-top: 2rem;
+  return `${match[0]}${"*".repeat(match.length - 2)}${match.at(-1)}`;
+}
+
+function censorProfanity(value) {
+  let sanitized = value;
+
+  blockedTerms.forEach((term) => {
+    const matcher = new RegExp(`\\b${term}\\b`, "gi");
+    sanitized = sanitized.replace(matcher, (match) => censorMatch(match));
+  });
+
+  return sanitized;
+}
+
+function normalizeForModeration(value) {
+  return value
+    .toLowerCase()
+    .replaceAll("@", "a")
+    .replaceAll("4", "a")
+    .replaceAll("3", "e")
+    .replaceAll("1", "i")
+    .replaceAll("!", "i")
+    .replaceAll("0", "o")
+    .replaceAll("$", "s")
+    .replaceAll("5", "s")
+    .replaceAll("7", "t")
+    .replace(/[^a-z]/g, "");
+}
+
+function containsBlockedTerm(value) {
+  const normalized = normalizeForModeration(value);
+  return blockedTerms.some((term) => normalized.includes(term.replace(/[^a-z]/gi, "").toLowerCase()));
+}
+
+function sanitizeCommentField(value) {
+  return censorProfanity(value.trim());
+}
+
+function buildCountryOptionsMarkup() {
+  return countryOptions
+    .slice()
+    .sort((a, b) => a.localeCompare(b))
+    .map((country) => `<option value="${escapeHtml(country)}">${escapeHtml(country)}</option>`)
+    .join("");
+}
+
+function formatLocation(geo) {
+  const city = geo.city?.trim();
+  const region = geo.region?.trim();
+  const country = geo.country?.trim();
+
+  if (city && region && country) {
+    return `${city}, ${region}, ${country}`;
   }
 
-  .nav {
-    border-radius: 28px;
-    padding: 0.7rem 0.85rem;
-    justify-content: space-between;
-    margin-bottom: 0.85rem;
+  if (region && country) {
+    return `${region}, ${country}`;
   }
 
-  .site-title-block {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
+  if (country) {
+    return country;
   }
 
-  .contact-card {
-    display: grid;
+  return "Unavailable";
+}
+
+function getOrCreateBrowserId() {
+  const existing = localStorage.getItem(browserIdKey);
+  if (existing) {
+    return existing;
   }
 
-  .statement-box {
-    width: 100%;
-  }
+  const created = `browser-${crypto.randomUUID()}`;
+  localStorage.setItem(browserIdKey, created);
+  return created;
+}
 
-  .statement-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+async function fetchJsonWithTimeout(url, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-  .statement-image {
-    max-height: none;
-    width: min(100%, 320px);
-    justify-self: center;
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    return await response.json();
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 }
 
-@media (max-width: 640px) {
-  .site-header,
-  .section,
-  .site-footer {
-    padding-left: 1rem;
-    padding-right: 1rem;
+function normalizeGeoResponse(data) {
+  return {
+    country: data.country?.trim() || data.country_name?.trim() || "",
+    region: data.region?.trim() || data.regionName?.trim() || "",
+    city: data.city?.trim() || "",
+  };
+}
+
+async function fetchVisitorGeo() {
+  const providers = [
+    async () => {
+      const data = await fetchJsonWithTimeout("https://ipwho.is/");
+      if (!data.success) {
+        throw new Error("ipwho.is lookup failed");
+      }
+
+      return normalizeGeoResponse(data);
+    },
+    async () => {
+      const data = await fetchJsonWithTimeout("https://ipapi.co/json/");
+      if (data.error) {
+        throw new Error("ipapi lookup failed");
+      }
+
+      return normalizeGeoResponse(data);
+    },
+  ];
+
+  for (const provider of providers) {
+    try {
+      const geo = await provider();
+      if (geo.country || geo.region || geo.city) {
+        return geo;
+      }
+    } catch (error) {
+      continue;
+    }
   }
 
-  .hero-copy,
-  .hero-panel,
-  .card,
-  .feature-card,
-  .impact-card,
-  .statement-box,
-  .contact-card,
-  .media-item,
-  .empty-state {
-    border-radius: 22px;
-  }
-
-  .hero-copy,
-  .hero-panel {
-    padding: 1.4rem;
-  }
-
-  .hero {
-    gap: 1rem;
-    padding-top: 1.4rem;
-    padding-bottom: 1.8rem;
-  }
-
-  .hero-title {
-    font-size: 2rem;
-    line-height: 1.06;
-  }
-
-  .hero-text {
-    font-size: 0.98rem;
-  }
-
-  .identity-heading {
-    align-items: flex-start;
-  }
-
-  .identity-logo {
-    width: 4.3rem;
-    height: 4.3rem;
-  }
-
-  .site-title {
-    font-size: 3.4rem;
-  }
-
-  .media-tabs,
-  .hero-actions,
-  .nav-links {
-    width: 100%;
-  }
-
-  .nav-toggle {
-    display: inline-flex;
-  }
-
-  .nav {
-    width: 100%;
-    justify-content: flex-start;
-    padding: 0;
-    margin-bottom: 0.75rem;
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    top: 0;
-  }
-
-  .desktop-nav-fab,
-  .desktop-nav-panel {
-    display: none !important;
-  }
-
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    left: 0;
-    right: auto;
-    width: min(18rem, calc(100vw - 2rem));
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.45rem;
-    padding: 0.75rem;
-    background: #ffffff;
-    border: 1px solid rgba(17, 17, 17, 0.08);
-    border-radius: 20px;
-    box-shadow: 0 16px 40px rgba(17, 17, 17, 0.08);
-    z-index: 1001;
-  }
-
-  .nav-links.nav-links-open {
-    display: flex;
-  }
-
-  .nav-links a {
-    font-size: 0.92rem;
-    padding: 0.8rem 0.9rem;
-    background: #f8f8f8;
-    border-radius: 14px;
-  }
-
-  .hero-actions .button {
-    flex: 1 1 100%;
-    text-align: center;
-  }
-
-  .tab-button {
-    flex: 1;
-    text-align: center;
-  }
-
-  .media-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .gallery-actions {
-    flex-wrap: wrap;
-  }
-
-  .gallery-action,
-  .comment-form button {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .comment-form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .contact-card,
-  .support-grid,
-  .two-column,
-  .impact-grid,
-  .feature-list {
-    gap: 1rem;
-  }
-
-  .identity-photo {
-    width: min(100%, 460px);
-    flex-basis: auto;
-    min-width: 0;
-    justify-self: center;
+  try {
+    return {
+      country: "Unavailable",
+      region: "Unavailable",
+      city: "",
+    };
+  } catch (error) {
+    return {
+      country: "Unavailable",
+      region: "Unavailable",
+      city: "",
+    };
   }
 }
 
-@media (min-width: 641px) {
-  .desktop-nav-fab {
-    display: inline-flex;
+async function recordVisit() {
+  const geo = await fetchVisitorGeo();
+  const visitorRegion = document.getElementById("visitor-region");
+
+  if (visitorRegion) {
+    visitorRegion.textContent = formatLocation(geo);
+  }
+
+  if (sessionStorage.getItem(visitSessionKey)) {
+    return geo;
+  }
+
+  await supabaseClient.from("site_visits").insert({
+    browser_id: browserId,
+    page_path: window.location.pathname,
+    country: geo.country || null,
+    region: geo.region || null,
+    city: geo.city || null,
+  });
+
+  sessionStorage.setItem(visitSessionKey, "true");
+  return geo;
+}
+
+function summarizeTopLocations(rows) {
+  const counts = rows.reduce((acc, row) => {
+    const country = row.country || "Unknown";
+    acc[country] = (acc[country] || 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([country, count]) => `${country} (${count})`)
+    .join(", ");
+}
+
+async function loadVisitorStats() {
+  const visitCountEl = document.getElementById("visit-count");
+  const topLocationsEl = document.getElementById("top-locations");
+
+  const [{ count }, { data }] = await Promise.all([
+    supabaseClient.from("site_visits").select("*", { count: "exact", head: true }),
+    supabaseClient.from("site_visits").select("country"),
+  ]);
+
+  if (visitCountEl) {
+    visitCountEl.textContent = String(count || 0);
+  }
+
+  if (topLocationsEl) {
+    topLocationsEl.textContent = data?.length ? summarizeTopLocations(data) : "No data yet";
   }
 }
+
+async function fetchLikeCount(itemId) {
+  const { count, error } = await supabaseClient
+    .from("gallery_likes")
+    .select("*", { count: "exact", head: true })
+    .eq("item_id", itemId);
+
+  if (error) {
+    return 0;
+  }
+
+  return count || 0;
+}
+
+async function fetchHasLiked(itemId) {
+  const { data, error } = await supabaseClient
+    .from("gallery_likes")
+    .select("item_id")
+    .eq("item_id", itemId)
+    .eq("browser_id", browserId)
+    .maybeSingle();
+
+  if (error) {
+    return false;
+  }
+
+  return Boolean(data);
+}
+
+async function fetchComments(itemId) {
+  const { data, error } = await supabaseClient
+    .from("gallery_comments")
+    .select("id, comment_text, created_at, browser_id")
+    .eq("item_id", itemId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return [];
+  }
+
+  return data || [];
+}
+
+const commentPayloadPrefix = "__FOBI_COMMENT__";
+
+function serializeCommentPayload(payload) {
+  return `${commentPayloadPrefix}${JSON.stringify(payload)}`;
+}
+
+function parseCommentPayload(rawComment) {
+  if (!rawComment.startsWith(commentPayloadPrefix)) {
+    return {
+      firstName: "",
+      lastName: "",
+      country: "",
+      message: rawComment,
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(rawComment.slice(commentPayloadPrefix.length));
+    return {
+      firstName: parsed.firstName || "",
+      lastName: parsed.lastName || "",
+      country: parsed.country || "",
+      message: parsed.message || "",
+    };
+  } catch (error) {
+    return {
+      firstName: "",
+      lastName: "",
+      country: "",
+      message: rawComment,
+    };
+  }
+}
+
+function renderCommentList(container, comments) {
+  container.innerHTML = "";
+
+  if (!comments.length) {
+    container.innerHTML = `<p class="comment-empty">No comments yet.</p>`;
+    return;
+  }
+
+  comments.forEach((comment) => {
+    const commentEl = document.createElement("article");
+    commentEl.className = "comment-item";
+    const canDelete = comment.browser_id === browserId;
+    const parsedComment = parseCommentPayload(comment.comment_text);
+    const commenterName = `${sanitizeCommentField(parsedComment.firstName)} ${sanitizeCommentField(parsedComment.lastName)}`.trim();
+    const commentMeta = [commenterName, sanitizeCommentField(parsedComment.country)].filter(Boolean).join(" • ");
+    const safeMessage = escapeHtml(censorProfanity(parsedComment.message));
+    commentEl.innerHTML = `
+      <div class="comment-item-top">
+        <div class="comment-copy">
+          ${commentMeta ? `<p class="comment-author">${escapeHtml(commentMeta)}</p>` : ""}
+          <p>${safeMessage}</p>
+        </div>
+        ${canDelete ? `<button class="comment-delete" type="button" data-comment-id="${comment.id}" aria-label="Delete comment">Delete</button>` : ""}
+      </div>
+      <span class="comment-time">${formatDate(comment.created_at)}</span>
+    `;
+    container.appendChild(commentEl);
+  });
+
+  container.querySelectorAll(".comment-delete").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const commentId = Number(button.dataset.commentId);
+      button.disabled = true;
+      await supabaseClient
+        .from("gallery_comments")
+        .delete()
+        .eq("id", commentId)
+        .eq("browser_id", browserId);
+
+      const itemId = comments.find((comment) => comment.id === commentId)?.item_id;
+      if (itemId) {
+        cardRefreshers.get(itemId)?.();
+      }
+    });
+  });
+}
+
+function buildPhotoCard(item) {
+  const article = document.createElement("article");
+  article.className = "media-item";
+  article.innerHTML = `
+    <figure>
+      <img src="${item.src}" alt="${item.alt}" draggable="false">
+      <figcaption class="media-caption">
+        <p>${item.caption}</p>
+        <div class="gallery-actions">
+          <button class="gallery-action like-button" type="button" aria-label="Like this photo"></button>
+          <button class="gallery-action comment-toggle" type="button" aria-expanded="false" aria-controls="comment-box-${item.id}">
+            <span class="comment-icon" aria-hidden="true">...</span>
+            <span>Comment</span>
+          </button>
+        </div>
+        <div class="comment-box hidden" id="comment-box-${item.id}">
+          <form class="comment-form">
+            <div class="comment-form-grid">
+              <div>
+                <label class="sr-only" for="comment-first-name-${item.id}">First name</label>
+                <input id="comment-first-name-${item.id}" name="firstName" type="text" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div>
+                <label class="sr-only" for="comment-last-name-${item.id}">Last name</label>
+                <input id="comment-last-name-${item.id}" name="lastName" type="text" placeholder="Last name" autocomplete="family-name" required>
+              </div>
+            </div>
+            <div>
+              <label class="sr-only" for="comment-country-${item.id}">Country</label>
+              <select id="comment-country-${item.id}" name="country" required>
+                <option value="">Select country</option>
+                ${buildCountryOptionsMarkup()}
+              </select>
+            </div>
+            <label class="sr-only" for="comment-${item.id}">Write a comment</label>
+            <textarea id="comment-${item.id}" name="comment" placeholder="Write a comment..." required></textarea>
+            <p class="comment-error hidden" aria-live="polite"></p>
+            <button type="submit">Post</button>
+          </form>
+          <div class="comment-list" aria-live="polite"></div>
+        </div>
+      </figcaption>
+    </figure>
+  `;
+
+  const likeButton = article.querySelector(".like-button");
+  const commentToggle = article.querySelector(".comment-toggle");
+  const commentBox = article.querySelector(".comment-box");
+  const commentForm = article.querySelector(".comment-form");
+  const firstNameInput = article.querySelector('[name="firstName"]');
+  const lastNameInput = article.querySelector('[name="lastName"]');
+  const countryInput = article.querySelector('[name="country"]');
+  const commentInput = article.querySelector("textarea");
+  const commentList = article.querySelector(".comment-list");
+  const commentError = article.querySelector(".comment-error");
+  const commentSubmitButton = commentForm.querySelector("button");
+
+  async function refreshCardState() {
+    const [likes, liked, comments] = await Promise.all([
+      fetchLikeCount(item.id),
+      fetchHasLiked(item.id),
+      fetchComments(item.id),
+    ]);
+
+    likeButton.classList.toggle("active", liked);
+    likeButton.textContent = liked ? `Liked (${likes})` : `Like (${likes})`;
+    likeButton.disabled = false;
+    likeButton.removeAttribute("aria-disabled");
+    likeButton.title = liked ? "Unlike this photo" : "Like this photo";
+    const commentsWithItem = comments.map((comment) => ({ ...comment, item_id: item.id }));
+    renderCommentList(commentList, commentsWithItem);
+  }
+
+  cardRefreshers.set(item.id, refreshCardState);
+  refreshCardState().catch(() => {
+    likeButton.textContent = "Like";
+    renderCommentList(commentList, []);
+  });
+
+  likeButton.addEventListener("click", async () => {
+    try {
+      likeButton.disabled = true;
+
+      const liked = await fetchHasLiked(item.id);
+
+      if (liked) {
+        await supabaseClient
+          .from("gallery_likes")
+          .delete()
+          .eq("item_id", item.id)
+          .eq("browser_id", browserId);
+      } else {
+        const { error } = await supabaseClient
+          .from("gallery_likes")
+          .insert({ item_id: item.id, browser_id: browserId });
+
+        if (error && error.code !== "23505") {
+          throw error;
+        }
+      }
+
+      await refreshCardState();
+    } catch (error) {
+      console.error("Like toggle failed", error);
+      likeButton.disabled = false;
+    }
+  });
+
+  commentToggle.addEventListener("click", () => {
+    const isHidden = commentBox.classList.toggle("hidden");
+    commentToggle.setAttribute("aria-expanded", String(!isHidden));
+    if (!isHidden) {
+      firstNameInput.focus();
+    }
+  });
+
+  [firstNameInput, lastNameInput, commentInput].forEach((field) => {
+    field.addEventListener("input", () => {
+      commentError.textContent = "";
+      commentError.classList.add("hidden");
+      const cursorPosition = field.selectionStart;
+      const censoredValue = censorProfanity(field.value);
+
+      if (field.value !== censoredValue) {
+        field.value = censoredValue;
+        if (typeof cursorPosition === "number") {
+          field.setSelectionRange(cursorPosition, cursorPosition);
+        }
+      }
+    });
+  });
+
+  countryInput.addEventListener("change", () => {
+    commentError.textContent = "";
+    commentError.classList.add("hidden");
+  });
+
+  commentForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const firstName = sanitizeCommentField(firstNameInput.value);
+    const lastName = sanitizeCommentField(lastNameInput.value);
+    const country = countryInput.value.trim();
+    const text = sanitizeCommentField(commentInput.value);
+    if (!firstName || !lastName || !country || !text) {
+      commentError.textContent = "Please fill in every field before posting.";
+      commentError.classList.remove("hidden");
+      commentForm.reportValidity();
+      return;
+    }
+
+    if (!countryOptions.includes(country)) {
+      commentError.textContent = "Please choose a valid country from the list.";
+      commentError.classList.remove("hidden");
+      return;
+    }
+
+    if ([firstName, lastName, country, text].some((value) => containsBlockedTerm(value))) {
+      commentError.textContent = "Please remove inappropriate language before posting.";
+      commentError.classList.remove("hidden");
+      return;
+    }
+
+    firstNameInput.value = firstName;
+    lastNameInput.value = lastName;
+    commentInput.value = text;
+    commentSubmitButton.disabled = true;
+
+    supabaseClient
+      .from("gallery_comments")
+      .insert({
+        item_id: item.id,
+        browser_id: browserId,
+        comment_text: serializeCommentPayload({
+          firstName,
+          lastName,
+          country,
+          message: text,
+        }),
+      })
+      .then(async () => {
+        firstNameInput.value = "";
+        lastNameInput.value = "";
+        countryInput.value = "";
+        commentInput.value = "";
+        await refreshCardState();
+        commentSubmitButton.disabled = false;
+      })
+      .catch((error) => {
+        console.error("Comment post failed", error);
+        commentSubmitButton.disabled = false;
+      });
+  });
+
+  return article;
+}
+
+function buildVideoCard(item) {
+  const article = document.createElement("article");
+  article.className = "media-item";
+  article.innerHTML = `
+    <figure>
+      <video controls preload="metadata" playsinline src="${item.src}">
+        Your browser does not support the video tag.
+      </video>
+      <figcaption class="media-caption">
+        <p>${item.caption}</p>
+        <div class="gallery-actions">
+          <button class="gallery-action like-button" type="button" aria-label="Like this video"></button>
+          <button class="gallery-action comment-toggle" type="button" aria-expanded="false" aria-controls="comment-box-${item.id}">
+            <span class="comment-icon" aria-hidden="true">...</span>
+            <span>Comment</span>
+          </button>
+        </div>
+        <div class="comment-box hidden" id="comment-box-${item.id}">
+          <form class="comment-form">
+            <div class="comment-form-grid">
+              <div>
+                <label class="sr-only" for="comment-first-name-${item.id}">First name</label>
+                <input id="comment-first-name-${item.id}" name="firstName" type="text" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div>
+                <label class="sr-only" for="comment-last-name-${item.id}">Last name</label>
+                <input id="comment-last-name-${item.id}" name="lastName" type="text" placeholder="Last name" autocomplete="family-name" required>
+              </div>
+            </div>
+            <div>
+              <label class="sr-only" for="comment-country-${item.id}">Country</label>
+              <select id="comment-country-${item.id}" name="country" required>
+                <option value="">Select country</option>
+                ${buildCountryOptionsMarkup()}
+              </select>
+            </div>
+            <label class="sr-only" for="comment-${item.id}">Write a comment</label>
+            <textarea id="comment-${item.id}" name="comment" placeholder="Write a comment..." required></textarea>
+            <p class="comment-error hidden" aria-live="polite"></p>
+            <button type="submit">Post</button>
+          </form>
+          <div class="comment-list" aria-live="polite"></div>
+        </div>
+      </figcaption>
+    </figure>
+  `;
+
+  const likeButton = article.querySelector(".like-button");
+  const commentToggle = article.querySelector(".comment-toggle");
+  const commentBox = article.querySelector(".comment-box");
+  const commentForm = article.querySelector(".comment-form");
+  const firstNameInput = article.querySelector('[name="firstName"]');
+  const lastNameInput = article.querySelector('[name="lastName"]');
+  const countryInput = article.querySelector('[name="country"]');
+  const commentInput = article.querySelector("textarea");
+  const commentList = article.querySelector(".comment-list");
+  const commentError = article.querySelector(".comment-error");
+  const commentSubmitButton = commentForm.querySelector("button");
+
+  async function refreshCardState() {
+    const [likes, liked, comments] = await Promise.all([
+      fetchLikeCount(item.id),
+      fetchHasLiked(item.id),
+      fetchComments(item.id),
+    ]);
+
+    likeButton.classList.toggle("active", liked);
+    likeButton.textContent = liked ? `Liked (${likes})` : `Like (${likes})`;
+    likeButton.disabled = false;
+    likeButton.removeAttribute("aria-disabled");
+    likeButton.title = liked ? "Unlike this video" : "Like this video";
+    const commentsWithItem = comments.map((comment) => ({ ...comment, item_id: item.id }));
+    renderCommentList(commentList, commentsWithItem);
+  }
+
+  cardRefreshers.set(item.id, refreshCardState);
+  refreshCardState().catch(() => {
+    likeButton.textContent = "Like";
+    renderCommentList(commentList, []);
+  });
+
+  likeButton.addEventListener("click", async () => {
+    try {
+      likeButton.disabled = true;
+
+      const liked = await fetchHasLiked(item.id);
+
+      if (liked) {
+        await supabaseClient
+          .from("gallery_likes")
+          .delete()
+          .eq("item_id", item.id)
+          .eq("browser_id", browserId);
+      } else {
+        const { error } = await supabaseClient
+          .from("gallery_likes")
+          .insert({ item_id: item.id, browser_id: browserId });
+
+        if (error && error.code !== "23505") {
+          throw error;
+        }
+      }
+
+      await refreshCardState();
+    } catch (error) {
+      console.error("Like toggle failed", error);
+      likeButton.disabled = false;
+    }
+  });
+
+  commentToggle.addEventListener("click", () => {
+    const isHidden = commentBox.classList.toggle("hidden");
+    commentToggle.setAttribute("aria-expanded", String(!isHidden));
+    if (!isHidden) {
+      firstNameInput.focus();
+    }
+  });
+
+  [firstNameInput, lastNameInput, commentInput].forEach((field) => {
+    field.addEventListener("input", () => {
+      commentError.textContent = "";
+      commentError.classList.add("hidden");
+      const cursorPosition = field.selectionStart;
+      const censoredValue = censorProfanity(field.value);
+
+      if (field.value !== censoredValue) {
+        field.value = censoredValue;
+        if (typeof cursorPosition === "number") {
+          field.setSelectionRange(cursorPosition, cursorPosition);
+        }
+      }
+    });
+  });
+
+  countryInput.addEventListener("change", () => {
+    commentError.textContent = "";
+    commentError.classList.add("hidden");
+  });
+
+  commentForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const firstName = sanitizeCommentField(firstNameInput.value);
+    const lastName = sanitizeCommentField(lastNameInput.value);
+    const country = countryInput.value.trim();
+    const text = sanitizeCommentField(commentInput.value);
+    if (!firstName || !lastName || !country || !text) {
+      commentError.textContent = "Please fill in every field before posting.";
+      commentError.classList.remove("hidden");
+      commentForm.reportValidity();
+      return;
+    }
+
+    if (!countryOptions.includes(country)) {
+      commentError.textContent = "Please choose a valid country from the list.";
+      commentError.classList.remove("hidden");
+      return;
+    }
+
+    if ([firstName, lastName, country, text].some((value) => containsBlockedTerm(value))) {
+      commentError.textContent = "Please remove inappropriate language before posting.";
+      commentError.classList.remove("hidden");
+      return;
+    }
+
+    firstNameInput.value = firstName;
+    lastNameInput.value = lastName;
+    commentInput.value = text;
+    commentSubmitButton.disabled = true;
+
+    supabaseClient
+      .from("gallery_comments")
+      .insert({
+        item_id: item.id,
+        browser_id: browserId,
+        comment_text: serializeCommentPayload({
+          firstName,
+          lastName,
+          country,
+          message: text,
+        }),
+      })
+      .then(async () => {
+        firstNameInput.value = "";
+        lastNameInput.value = "";
+        countryInput.value = "";
+        commentInput.value = "";
+        await refreshCardState();
+        commentSubmitButton.disabled = false;
+      })
+      .catch((error) => {
+        console.error("Comment post failed", error);
+        commentSubmitButton.disabled = false;
+      });
+  });
+
+  return article;
+}
+
+function setupRealtime() {
+  supabaseClient
+    .channel("gallery-live-updates")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "gallery_likes" },
+      (payload) => {
+        const itemId = payload.new?.item_id || payload.old?.item_id;
+        cardRefreshers.get(itemId)?.();
+      }
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "gallery_comments" },
+      (payload) => {
+        const itemId = payload.new?.item_id || payload.old?.item_id;
+        cardRefreshers.get(itemId)?.();
+      }
+    )
+    .subscribe();
+}
+
+function renderPhotos() {
+  const panel = document.getElementById("photos-panel");
+  const validPhotos = photoItems.filter((item) => item.src.trim() !== "");
+
+  if (!validPhotos.length) {
+    panel.appendChild(createEmptyState("No photos added yet. Update the photoItems list in script.js."));
+    return;
+  }
+
+  validPhotos.forEach((item) => {
+    panel.appendChild(buildPhotoCard(item));
+  });
+}
+
+function renderVideos() {
+  const panel = document.getElementById("videos-panel");
+  const validVideos = videoItems.filter((item) => item.src.trim() !== "");
+
+  if (!validVideos.length) {
+    panel.appendChild(createEmptyState("No video yet coming soon!!"));
+    return;
+  }
+
+  validVideos.forEach((item) => {
+    panel.appendChild(buildVideoCard(item));
+  });
+}
+
+function setupTabs() {
+  const buttons = document.querySelectorAll(".tab-button");
+  const photoPanel = document.getElementById("photos-panel");
+  const videoPanel = document.getElementById("videos-panel");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const isPhotos = button.dataset.tab === "photos";
+
+      buttons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-selected", String(active));
+      });
+
+      photoPanel.classList.toggle("hidden", !isPhotos);
+      videoPanel.classList.toggle("hidden", isPhotos);
+    });
+  });
+}
+
+function setupMobileNav() {
+  const toggle = document.querySelector(".nav-toggle");
+  const nav = document.querySelector(".nav-links");
+  const navWrapper = document.querySelector(".nav");
+
+  if (!toggle || !nav || !navWrapper) {
+    return;
+  }
+
+  function setMenuState(open) {
+    nav.classList.toggle("nav-links-open", open);
+    toggle.classList.toggle("nav-toggle-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+  }
+
+  toggle.addEventListener("click", () => {
+    const open = !nav.classList.contains("nav-links-open");
+    setMenuState(open);
+  });
+
+  nav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      setMenuState(false);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!navWrapper.contains(event.target)) {
+      setMenuState(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setMenuState(false);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 640) {
+      setMenuState(false);
+    }
+  });
+}
+
+function setupDesktopNavFab() {
+  const toggle = document.querySelector(".desktop-nav-fab");
+  const panel = document.querySelector(".desktop-nav-panel");
+
+  if (!toggle || !panel) {
+    return;
+  }
+
+  function setPanelState(open) {
+    panel.classList.toggle("desktop-nav-panel-open", open);
+    toggle.classList.toggle("desktop-nav-fab-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close quick navigation" : "Open quick navigation");
+  }
+
+  toggle.addEventListener("click", () => {
+    const open = !panel.classList.contains("desktop-nav-panel-open");
+    setPanelState(open);
+  });
+
+  panel.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      setPanelState(false);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!toggle.contains(event.target) && !panel.contains(event.target)) {
+      setPanelState(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setPanelState(false);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth <= 640) {
+      setPanelState(false);
+    }
+  });
+}
+
+renderPhotos();
+renderVideos();
+setupTabs();
+setupMobileNav();
+setupDesktopNavFab();
+setupRealtime();
+recordVisit().then(() => loadVisitorStats());
+preventEasyImageSaving();
