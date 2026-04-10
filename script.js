@@ -1,19 +1,19 @@
 const photoItems = [
   {
     id: "outreach-2b",
-    src: "IMG_20260325_120315_492.jpg",
+    src: "IMG_20260325_120315_492.jpg?v=20260410-2",
     alt: "FOBI outreach photo five",
     caption: "Another moment captured during the FOBI outreach visit.",
   },
   {
     id: "outreach-1",
-    src: "IMG_20260325_101536_320.jpg",
+    src: "IMG_20260325_101536_320.jpg?v=20260410-2",
     alt: "FOBI outreach photo one",
     caption: "A moment from the FOBI health outreach visit.",
   },
   {
     id: "outreach-2",
-    src: "IMG_20260325_104646_893.jpg",
+    src: "IMG_20260325_104646_893.jpg?v=20260410-2",
     alt: "FOBI outreach photo two",
     caption: "Support, care, and presence during the outreach project.",
   },
