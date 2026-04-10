@@ -1,19 +1,19 @@
 const photoItems = [
   {
     id: "outreach-2b",
-    src: "assets/images/IMG_20260325_120315_492.jpg",
+    src: "/assets/images/IMG_20260325_120315_492.jpg",
     alt: "FOBI outreach photo five",
     caption: "Another moment captured during the FOBI outreach visit.",
   },
   {
     id: "outreach-1",
-    src: "assets/images/IMG_20260325_101536_320.jpg",
+    src: "/assets/images/IMG_20260325_101536_320.jpg",
     alt: "FOBI outreach photo one",
     caption: "A moment from the FOBI health outreach visit.",
   },
   {
     id: "outreach-2",
-    src: "assets/images/IMG_20260325_104646_893.jpg",
+    src: "/assets/images/IMG_20260325_104646_893.jpg",
     alt: "FOBI outreach photo two",
     caption: "Support, care, and presence during the outreach project.",
   },
@@ -22,7 +22,7 @@ const photoItems = [
 const videoItems = [
   {
     id: "olive-prime-interview",
-    src: "assets/videos/olive-prime-interview.mp4",
+    src: "/assets/videos/olive-prime-interview.mp4",
     caption: "Imara and Oyinda conducting an interview with The Olive Prime Psychological Services Lagos.",
   },
 ];
