@@ -22,7 +22,7 @@ const photoItems = [
 const videoItems = [
   {
     id: "olive-prime-interview",
-    src: "assets/videos/olive-prime-interview-web.mov",
+    src: "assets/videos/olive-prime-interview.mp4",
     caption: "Imara and Oyinda conducting an interview with The Olive Prime Psychological Services Lagos.",
   },
 ];
