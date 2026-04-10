@@ -21,6 +21,7 @@ const photoItems = [
 
 const videoItems = [
   {
+    id: "olive-prime-interview",
     src: "assets/videos/olive-prime-interview.mp4",
     caption: "Imara and Oyinda conducting an interview with The Olive Prime Psychological Services Lagos.",
   },
@@ -813,6 +814,204 @@ function buildPhotoCard(item) {
   return article;
 }
 
+function buildVideoCard(item) {
+  const article = document.createElement("article");
+  article.className = "media-item";
+  article.innerHTML = `
+    <figure>
+      <video controls preload="metadata" playsinline src="${item.src}">
+        Your browser does not support the video tag.
+      </video>
+      <figcaption class="media-caption">
+        <p>${item.caption}</p>
+        <div class="gallery-actions">
+          <button class="gallery-action like-button" type="button" aria-label="Like this video"></button>
+          <button class="gallery-action comment-toggle" type="button" aria-expanded="false" aria-controls="comment-box-${item.id}">
+            <span class="comment-icon" aria-hidden="true">...</span>
+            <span>Comment</span>
+          </button>
+        </div>
+        <div class="comment-box hidden" id="comment-box-${item.id}">
+          <form class="comment-form">
+            <div class="comment-form-grid">
+              <div>
+                <label class="sr-only" for="comment-first-name-${item.id}">First name</label>
+                <input id="comment-first-name-${item.id}" name="firstName" type="text" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div>
+                <label class="sr-only" for="comment-last-name-${item.id}">Last name</label>
+                <input id="comment-last-name-${item.id}" name="lastName" type="text" placeholder="Last name" autocomplete="family-name" required>
+              </div>
+            </div>
+            <div>
+              <label class="sr-only" for="comment-country-${item.id}">Country</label>
+              <select id="comment-country-${item.id}" name="country" required>
+                <option value="">Select country</option>
+                ${buildCountryOptionsMarkup()}
+              </select>
+            </div>
+            <label class="sr-only" for="comment-${item.id}">Write a comment</label>
+            <textarea id="comment-${item.id}" name="comment" placeholder="Write a comment..." required></textarea>
+            <p class="comment-error hidden" aria-live="polite"></p>
+            <button type="submit">Post</button>
+          </form>
+          <div class="comment-list" aria-live="polite"></div>
+        </div>
+      </figcaption>
+    </figure>
+  `;
+
+  const likeButton = article.querySelector(".like-button");
+  const commentToggle = article.querySelector(".comment-toggle");
+  const commentBox = article.querySelector(".comment-box");
+  const commentForm = article.querySelector(".comment-form");
+  const firstNameInput = article.querySelector('[name="firstName"]');
+  const lastNameInput = article.querySelector('[name="lastName"]');
+  const countryInput = article.querySelector('[name="country"]');
+  const commentInput = article.querySelector("textarea");
+  const commentList = article.querySelector(".comment-list");
+  const commentError = article.querySelector(".comment-error");
+  const commentSubmitButton = commentForm.querySelector("button");
+
+  async function refreshCardState() {
+    const [likes, liked, comments] = await Promise.all([
+      fetchLikeCount(item.id),
+      fetchHasLiked(item.id),
+      fetchComments(item.id),
+    ]);
+
+    likeButton.classList.toggle("active", liked);
+    likeButton.textContent = liked ? `Liked (${likes})` : `Like (${likes})`;
+    likeButton.disabled = false;
+    likeButton.removeAttribute("aria-disabled");
+    likeButton.title = liked ? "Unlike this video" : "Like this video";
+    const commentsWithItem = comments.map((comment) => ({ ...comment, item_id: item.id }));
+    renderCommentList(commentList, commentsWithItem);
+  }
+
+  cardRefreshers.set(item.id, refreshCardState);
+  refreshCardState().catch(() => {
+    likeButton.textContent = "Like";
+    renderCommentList(commentList, []);
+  });
+
+  likeButton.addEventListener("click", async () => {
+    try {
+      likeButton.disabled = true;
+
+      const liked = await fetchHasLiked(item.id);
+
+      if (liked) {
+        await supabaseClient
+          .from("gallery_likes")
+          .delete()
+          .eq("item_id", item.id)
+          .eq("browser_id", browserId);
+      } else {
+        const { error } = await supabaseClient
+          .from("gallery_likes")
+          .insert({ item_id: item.id, browser_id: browserId });
+
+        if (error && error.code !== "23505") {
+          throw error;
+        }
+      }
+
+      await refreshCardState();
+    } catch (error) {
+      console.error("Like toggle failed", error);
+      likeButton.disabled = false;
+    }
+  });
+
+  commentToggle.addEventListener("click", () => {
+    const isHidden = commentBox.classList.toggle("hidden");
+    commentToggle.setAttribute("aria-expanded", String(!isHidden));
+    if (!isHidden) {
+      firstNameInput.focus();
+    }
+  });
+
+  [firstNameInput, lastNameInput, commentInput].forEach((field) => {
+    field.addEventListener("input", () => {
+      commentError.textContent = "";
+      commentError.classList.add("hidden");
+      const cursorPosition = field.selectionStart;
+      const censoredValue = censorProfanity(field.value);
+
+      if (field.value !== censoredValue) {
+        field.value = censoredValue;
+        if (typeof cursorPosition === "number") {
+          field.setSelectionRange(cursorPosition, cursorPosition);
+        }
+      }
+    });
+  });
+
+  countryInput.addEventListener("change", () => {
+    commentError.textContent = "";
+    commentError.classList.add("hidden");
+  });
+
+  commentForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const firstName = sanitizeCommentField(firstNameInput.value);
+    const lastName = sanitizeCommentField(lastNameInput.value);
+    const country = countryInput.value.trim();
+    const text = sanitizeCommentField(commentInput.value);
+    if (!firstName || !lastName || !country || !text) {
+      commentError.textContent = "Please fill in every field before posting.";
+      commentError.classList.remove("hidden");
+      commentForm.reportValidity();
+      return;
+    }
+
+    if (!countryOptions.includes(country)) {
+      commentError.textContent = "Please choose a valid country from the list.";
+      commentError.classList.remove("hidden");
+      return;
+    }
+
+    if ([firstName, lastName, country, text].some((value) => containsBlockedTerm(value))) {
+      commentError.textContent = "Please remove inappropriate language before posting.";
+      commentError.classList.remove("hidden");
+      return;
+    }
+
+    firstNameInput.value = firstName;
+    lastNameInput.value = lastName;
+    commentInput.value = text;
+    commentSubmitButton.disabled = true;
+
+    supabaseClient
+      .from("gallery_comments")
+      .insert({
+        item_id: item.id,
+        browser_id: browserId,
+        comment_text: serializeCommentPayload({
+          firstName,
+          lastName,
+          country,
+          message: text,
+        }),
+      })
+      .then(async () => {
+        firstNameInput.value = "";
+        lastNameInput.value = "";
+        countryInput.value = "";
+        commentInput.value = "";
+        await refreshCardState();
+        commentSubmitButton.disabled = false;
+      })
+      .catch((error) => {
+        console.error("Comment post failed", error);
+        commentSubmitButton.disabled = false;
+      });
+  });
+
+  return article;
+}
+
 function setupRealtime() {
   supabaseClient
     .channel("gallery-live-updates")
@@ -859,18 +1058,7 @@ function renderVideos() {
   }
 
   validVideos.forEach((item) => {
-    const article = document.createElement("article");
-    article.className = "media-item";
-    article.innerHTML = `
-      <figure>
-        <video controls preload="metadata">
-          <source src="${item.src}">
-          Your browser does not support the video tag.
-        </video>
-        <figcaption>${item.caption}</figcaption>
-      </figure>
-    `;
-    panel.appendChild(article);
+    panel.appendChild(buildVideoCard(item));
   });
 }
 
