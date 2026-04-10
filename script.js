@@ -21,8 +21,8 @@ const photoItems = [
 
 const videoItems = [
   {
-    src: "",
-    caption: "Add your first video by placing it in assets/videos and updating script.js.",
+    src: "assets/videos/WhatsApp%20Video%202026-04-04%20at%2018.04.55%20(1).mp4",
+    caption: "Imara and Oyinda conducting an interview with The Olive Prime Psychological Services Lagos.",
   },
 ];
 
@@ -368,24 +368,66 @@ function getOrCreateBrowserId() {
   return created;
 }
 
-async function fetchVisitorGeo() {
-  try {
-    const response = await fetch("/api/geo", {
-      headers: {
-        Accept: "application/json",
-      },
-    });
+async function fetchJsonWithTimeout(url, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
+  try {
+    const response = await fetch(url, { signal: controller.signal });
     if (!response.ok) {
-      throw new Error(`Geo endpoint failed: ${response.status}`);
+      throw new Error(`Request failed: ${response.status}`);
     }
 
-    const geo = await response.json();
+    return await response.json();
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
 
+function normalizeGeoResponse(data) {
+  return {
+    country: data.country?.trim() || data.country_name?.trim() || "",
+    region: data.region?.trim() || data.regionName?.trim() || "",
+    city: data.city?.trim() || "",
+  };
+}
+
+async function fetchVisitorGeo() {
+  const providers = [
+    async () => {
+      const data = await fetchJsonWithTimeout("https://ipwho.is/");
+      if (!data.success) {
+        throw new Error("ipwho.is lookup failed");
+      }
+
+      return normalizeGeoResponse(data);
+    },
+    async () => {
+      const data = await fetchJsonWithTimeout("https://ipapi.co/json/");
+      if (data.error) {
+        throw new Error("ipapi lookup failed");
+      }
+
+      return normalizeGeoResponse(data);
+    },
+  ];
+
+  for (const provider of providers) {
+    try {
+      const geo = await provider();
+      if (geo.country || geo.region || geo.city) {
+        return geo;
+      }
+    } catch (error) {
+      continue;
+    }
+  }
+
+  try {
     return {
-      country: geo.country?.trim() || "Unavailable",
-      region: geo.region?.trim() || "Unavailable",
-      city: geo.city?.trim() || "",
+      country: "Unavailable",
+      region: "Unavailable",
+      city: "",
     };
   } catch (error) {
     return {
