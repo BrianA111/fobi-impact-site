@@ -729,12 +729,6 @@ blockquote {
   gap: 0.7rem;
 }
 
-.comment-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
-}
-
 .comment-form input,
 .comment-form select,
 .comment-form textarea {
@@ -1201,10 +1195,6 @@ blockquote {
     width: 100%;
     justify-content: center;
     text-align: center;
-  }
-
-  .comment-form-grid {
-    grid-template-columns: 1fr;
   }
 
   .contact-card,
