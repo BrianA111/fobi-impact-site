@@ -546,8 +546,6 @@ function serializeCommentPayload(payload) {
 function parseCommentPayload(rawComment) {
   if (!rawComment.startsWith(commentPayloadPrefix)) {
     return {
-      firstName: "",
-      lastName: "",
       country: "",
       message: rawComment,
     };
@@ -556,15 +554,11 @@ function parseCommentPayload(rawComment) {
   try {
     const parsed = JSON.parse(rawComment.slice(commentPayloadPrefix.length));
     return {
-      firstName: parsed.firstName || "",
-      lastName: parsed.lastName || "",
       country: parsed.country || "",
       message: parsed.message || "",
     };
   } catch (error) {
     return {
-      firstName: "",
-      lastName: "",
       country: "",
       message: rawComment,
     };
@@ -584,8 +578,7 @@ function renderCommentList(container, comments) {
     commentEl.className = "comment-item";
     const canDelete = comment.browser_id === browserId;
     const parsedComment = parseCommentPayload(comment.comment_text);
-    const commenterName = `${sanitizeCommentField(parsedComment.firstName)} ${sanitizeCommentField(parsedComment.lastName)}`.trim();
-    const commentMeta = [commenterName, sanitizeCommentField(parsedComment.country)].filter(Boolean).join(" • ");
+    const commentMeta = sanitizeCommentField(parsedComment.country);
     const safeMessage = escapeHtml(censorProfanity(parsedComment.message));
     commentEl.innerHTML = `
       <div class="comment-item-top">
@@ -635,16 +628,6 @@ function buildPhotoCard(item) {
         </div>
         <div class="comment-box hidden" id="comment-box-${item.id}">
           <form class="comment-form">
-            <div class="comment-form-grid">
-              <div>
-                <label class="sr-only" for="comment-first-name-${item.id}">First name</label>
-                <input id="comment-first-name-${item.id}" name="firstName" type="text" placeholder="First name" autocomplete="given-name" required>
-              </div>
-              <div>
-                <label class="sr-only" for="comment-last-name-${item.id}">Last name</label>
-                <input id="comment-last-name-${item.id}" name="lastName" type="text" placeholder="Last name" autocomplete="family-name" required>
-              </div>
-            </div>
             <div>
               <label class="sr-only" for="comment-country-${item.id}">Country</label>
               <select id="comment-country-${item.id}" name="country" required>
@@ -667,8 +650,6 @@ function buildPhotoCard(item) {
   const commentToggle = article.querySelector(".comment-toggle");
   const commentBox = article.querySelector(".comment-box");
   const commentForm = article.querySelector(".comment-form");
-  const firstNameInput = article.querySelector('[name="firstName"]');
-  const lastNameInput = article.querySelector('[name="lastName"]');
   const countryInput = article.querySelector('[name="country"]');
   const commentInput = article.querySelector("textarea");
   const commentList = article.querySelector(".comment-list");
@@ -730,11 +711,11 @@ function buildPhotoCard(item) {
     const isHidden = commentBox.classList.toggle("hidden");
     commentToggle.setAttribute("aria-expanded", String(!isHidden));
     if (!isHidden) {
-      firstNameInput.focus();
+      countryInput.focus();
     }
   });
 
-  [firstNameInput, lastNameInput, commentInput].forEach((field) => {
+  [commentInput].forEach((field) => {
     field.addEventListener("input", () => {
       commentError.textContent = "";
       commentError.classList.add("hidden");
@@ -757,11 +738,9 @@ function buildPhotoCard(item) {
 
   commentForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const firstName = sanitizeCommentField(firstNameInput.value);
-    const lastName = sanitizeCommentField(lastNameInput.value);
     const country = countryInput.value.trim();
     const text = sanitizeCommentField(commentInput.value);
-    if (!firstName || !lastName || !country || !text) {
+    if (!country || !text) {
       commentError.textContent = "Please fill in every field before posting.";
       commentError.classList.remove("hidden");
       commentForm.reportValidity();
@@ -774,14 +753,12 @@ function buildPhotoCard(item) {
       return;
     }
 
-    if ([firstName, lastName, country, text].some((value) => containsBlockedTerm(value))) {
+    if ([country, text].some((value) => containsBlockedTerm(value))) {
       commentError.textContent = "Please remove inappropriate language before posting.";
       commentError.classList.remove("hidden");
       return;
     }
 
-    firstNameInput.value = firstName;
-    lastNameInput.value = lastName;
     commentInput.value = text;
     commentSubmitButton.disabled = true;
 
@@ -791,15 +768,11 @@ function buildPhotoCard(item) {
         item_id: item.id,
         browser_id: browserId,
         comment_text: serializeCommentPayload({
-          firstName,
-          lastName,
           country,
           message: text,
         }),
       })
       .then(async () => {
-        firstNameInput.value = "";
-        lastNameInput.value = "";
         countryInput.value = "";
         commentInput.value = "";
         await refreshCardState();
@@ -833,16 +806,6 @@ function buildVideoCard(item) {
         </div>
         <div class="comment-box hidden" id="comment-box-${item.id}">
           <form class="comment-form">
-            <div class="comment-form-grid">
-              <div>
-                <label class="sr-only" for="comment-first-name-${item.id}">First name</label>
-                <input id="comment-first-name-${item.id}" name="firstName" type="text" placeholder="First name" autocomplete="given-name" required>
-              </div>
-              <div>
-                <label class="sr-only" for="comment-last-name-${item.id}">Last name</label>
-                <input id="comment-last-name-${item.id}" name="lastName" type="text" placeholder="Last name" autocomplete="family-name" required>
-              </div>
-            </div>
             <div>
               <label class="sr-only" for="comment-country-${item.id}">Country</label>
               <select id="comment-country-${item.id}" name="country" required>
@@ -865,8 +828,6 @@ function buildVideoCard(item) {
   const commentToggle = article.querySelector(".comment-toggle");
   const commentBox = article.querySelector(".comment-box");
   const commentForm = article.querySelector(".comment-form");
-  const firstNameInput = article.querySelector('[name="firstName"]');
-  const lastNameInput = article.querySelector('[name="lastName"]');
   const countryInput = article.querySelector('[name="country"]');
   const commentInput = article.querySelector("textarea");
   const commentList = article.querySelector(".comment-list");
@@ -928,11 +889,11 @@ function buildVideoCard(item) {
     const isHidden = commentBox.classList.toggle("hidden");
     commentToggle.setAttribute("aria-expanded", String(!isHidden));
     if (!isHidden) {
-      firstNameInput.focus();
+      countryInput.focus();
     }
   });
 
-  [firstNameInput, lastNameInput, commentInput].forEach((field) => {
+  [commentInput].forEach((field) => {
     field.addEventListener("input", () => {
       commentError.textContent = "";
       commentError.classList.add("hidden");
@@ -955,11 +916,9 @@ function buildVideoCard(item) {
 
   commentForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const firstName = sanitizeCommentField(firstNameInput.value);
-    const lastName = sanitizeCommentField(lastNameInput.value);
     const country = countryInput.value.trim();
     const text = sanitizeCommentField(commentInput.value);
-    if (!firstName || !lastName || !country || !text) {
+    if (!country || !text) {
       commentError.textContent = "Please fill in every field before posting.";
       commentError.classList.remove("hidden");
       commentForm.reportValidity();
@@ -972,14 +931,12 @@ function buildVideoCard(item) {
       return;
     }
 
-    if ([firstName, lastName, country, text].some((value) => containsBlockedTerm(value))) {
+    if ([country, text].some((value) => containsBlockedTerm(value))) {
       commentError.textContent = "Please remove inappropriate language before posting.";
       commentError.classList.remove("hidden");
       return;
     }
 
-    firstNameInput.value = firstName;
-    lastNameInput.value = lastName;
     commentInput.value = text;
     commentSubmitButton.disabled = true;
 
@@ -989,15 +946,11 @@ function buildVideoCard(item) {
         item_id: item.id,
         browser_id: browserId,
         comment_text: serializeCommentPayload({
-          firstName,
-          lastName,
           country,
           message: text,
         }),
       })
       .then(async () => {
-        firstNameInput.value = "";
-        lastNameInput.value = "";
         countryInput.value = "";
         commentInput.value = "";
         await refreshCardState();
